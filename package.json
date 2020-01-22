@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron main.js",
-    "build": "electron-packager . tocGame"
+    "build:windows": "electron-packager . tocGame --out=windowsBuild",
+    "build:linux": "electron-packager . tocGame --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=linuxBuild"
   },
   "author": "Eze",
   "license": "ISC",

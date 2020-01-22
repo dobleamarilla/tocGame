@@ -4,7 +4,7 @@ function startDB() {
     db = new Dexie('tocGame');
     db.version(1).stores({
         cesta: 'idArticulo, nombreArticulo, unidades, subtotal, promocion, activo',
-        tickets: 'idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador',
+        tickets: '++idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador',
         articulos: 'id, nombre, precio, iva, aPeso, familia',
         teclado: 'id, arrayTeclado',
         trabajadores: 'idTrabajador, nombre, nombreCorto',
@@ -671,7 +671,7 @@ function fichadoYActivo() {
 }
 
 function pagarConTarjeta() {
-    var idTicket = generarIdTicket();
+    //var idTicket = generarIdTicket();
     var time = new Date();
     var stringTime = `${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
 
@@ -684,7 +684,7 @@ function pagarConTarjeta() {
                         {
                             db.activo.toArray().then(res => {
                                 if (res.length === 1) {
-                                    db.tickets.put({ idTicket: idTicket, timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador }).then(function () {
+                                    db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador }).then(idTicket => {
                                         imagenImprimir.setAttribute('onclick', 'imprimirTicketReal(' + idTicket + ')');
                                         rowEfectivoTarjeta.setAttribute('class', 'row hide');
                                         rowImprimirTicket.setAttribute('class', 'row');
@@ -715,7 +715,7 @@ function pagarConTarjeta() {
 }
 
 function pagarConEfectivo() {
-    var idTicket = generarIdTicket();
+    //var idTicket = generarIdTicket();
     var time = new Date();
     var stringTime = `${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
 
@@ -726,7 +726,7 @@ function pagarConEfectivo() {
                     if (lista.length > 0) {
                         db.activo.toArray().then(res => {
                             if (res.length === 1) {
-                                db.tickets.put({ idTicket: idTicket, timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador }).then(function () {
+                                db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador }).then(idTicket => {
                                     imagenImprimir.setAttribute('onclick', 'imprimirTicketReal(' + idTicket + ')');
                                     rowEfectivoTarjeta.setAttribute('class', 'row hide');
                                     rowImprimirTicket.setAttribute('class', 'row');

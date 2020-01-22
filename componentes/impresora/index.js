@@ -1,5 +1,6 @@
 var escpos = require('escpos');
-
+var exec = require('child_process').exec;
+var os = require('os');
 var imprimirPrueba = function (numFactura, arrayCompra, total, visa) {
 
     var device = new escpos.USB('0x4B8', '0x202'); //USB
@@ -60,5 +61,13 @@ exports.imprimirTicket = function (req, event) {
         console.log("No se encuentra la impresora");
         console.log(err);
         event.sender.send('falloImpresora', 'La impresora no está configurada');
+        if (os.platform() === 'win32') { //
+
+        }
+        else {
+            if (os.platform() === 'linux') {
+                exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
+            }
+        }
     }
 }
