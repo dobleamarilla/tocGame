@@ -1,9 +1,0 @@
-directories:
-  output: dist
-  buildResources: build
-appId: tocGame
-linux:
-  target:
-    - deb
-  category: Utility
-electronVersion: 7.1.8
