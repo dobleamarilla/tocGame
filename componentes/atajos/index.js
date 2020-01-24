@@ -1,4 +1,4 @@
-const exec = require('child_process').exec;
+const exec = require('child_process').exec, child;
 const os = require('os');
 
 function atajosTeclado(globalShortcut, ventana) {
@@ -17,7 +17,15 @@ function atajosTeclado(globalShortcut, ventana) {
         }
         else {
             if (os.platform() === 'linux') {
-                exec('sh /home/hit/instalador.sh');
+                const myShellScript = exec('sh instalador.sh /home/hit');
+                myShellScript.stdout.on('data', (data) => {
+                    console.log(data);
+                    // do whatever you want here with data
+                });
+                myShellScript.stderr.on('data', (data) => {
+                    console.error(data);
+                });
+                //exec('sh /home/hit/instalador.sh');
             }
         }
     });
