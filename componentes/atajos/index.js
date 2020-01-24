@@ -1,4 +1,4 @@
-const shell = require('shelljs');
+const exec = require('child_process').exec;
 const os = require('os');
 
 function atajosTeclado(globalShortcut, ventana) {
@@ -17,7 +17,7 @@ function atajosTeclado(globalShortcut, ventana) {
         }
         else {
             if (os.platform() === 'linux') {
-                shell.exec('sh /home/hit/instalador.sh');
+                exec('sh /home/hit/instalador.sh');
             }
         }
     });
