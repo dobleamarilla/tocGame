@@ -17,7 +17,7 @@ function atajosTeclado(globalShortcut, ventana) {
         }
         else {
             if (os.platform() === 'linux') {
-                const myShellScript = exec('sh instalador.sh /home/hit');
+                const myShellScript = exec('sh /home/hit/instalador.sh');
                 myShellScript.stdout.on('data', (data) => {
                     console.log(data);
                     // do whatever you want here with data
