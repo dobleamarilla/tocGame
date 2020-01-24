@@ -15,6 +15,7 @@
     "escpos": "^2.5.2",
     "jq-keyboard": "^1.0.2",
     "jquery": "^3.4.1",
+    "shelljs": "^0.8.3",
     "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
