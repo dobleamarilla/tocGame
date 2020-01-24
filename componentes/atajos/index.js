@@ -1,4 +1,4 @@
-const exec = require('child_process').exec, child;
+const exec = require('child_process').exec;
 const os = require('os');
 
 function atajosTeclado(globalShortcut, ventana) {
