@@ -42,6 +42,7 @@ var imprimirPrueba = function (numFactura, arrayCompra, total, visa) {
             .text('TOTAL: ' + total + ' EUR')
             .size(1, 1)
             .text('IVA 10% : ' + (total / 1.1).toFixed(2) + ' EUR')
+            .text('-- ES COPIA --')
             .text('GRACIES PER LA SEVA VISITA')
             .text('WiFi: 365Cafe')
             .text('Psw: 365sabadell')
