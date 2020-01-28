@@ -685,11 +685,12 @@ function pagarConTarjeta() {
                             db.activo.toArray().then(res => {
                                 if (res.length === 1) {
                                     db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador }).then(idTicket => {
-                                        imagenImprimir.setAttribute('onclick', 'imprimirTicketReal(' + idTicket + ')');
-                                        rowEfectivoTarjeta.setAttribute('class', 'row hide');
-                                        rowImprimirTicket.setAttribute('class', 'row');
+                                        //imagenImprimir.setAttribute('onclick', 'imprimirTicketReal(' + idTicket + ')');
+                                        //rowEfectivoTarjeta.setAttribute('class', 'row hide');
+                                        //rowImprimirTicket.setAttribute('class', 'row');
                                         vaciarCesta();
                                         notificacion('¡Ticket creado!', 'success');
+                                        $('#modalPago').modal('hide');
                                     });
                                 } else {
                                     console.log('Error #66');
@@ -727,11 +728,12 @@ function pagarConEfectivo() {
                         db.activo.toArray().then(res => {
                             if (res.length === 1) {
                                 db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador }).then(idTicket => {
-                                    imagenImprimir.setAttribute('onclick', 'imprimirTicketReal(' + idTicket + ')');
-                                    rowEfectivoTarjeta.setAttribute('class', 'row hide');
-                                    rowImprimirTicket.setAttribute('class', 'row');
+                                    //imagenImprimir.setAttribute('onclick', 'imprimirTicketReal(' + idTicket + ')');
+                                    //rowEfectivoTarjeta.setAttribute('class', 'row hide');
+                                    //rowImprimirTicket.setAttribute('class', 'row');
                                     vaciarCesta();
                                     notificacion('¡Ticket creado!', 'success');
+                                    $('#modalPago').modal('hide');
                                 });
                             } else {
                                 console.log('Error #6');
