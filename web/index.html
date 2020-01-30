@@ -547,7 +547,7 @@
                     <button type="button" class="btn btn-danger" onclick="alert('llamar a cerrar caja')"
                         style="font-family: 'Anton', sans-serif; font-size: 25px; font-style: normal; color: black;">ENTRADA
                         DINERO</button>
-                    <button type="button" class="btn btn-warning" onclick="alert('llamar a cerrar caja')"
+                    <button type="button" class="btn btn-warning" onclick="abrirModalSalidaDinero();"
                         style="font-family: 'Anton', sans-serif; font-size: 25px; font-style: normal; color: black;">SALIDA
                         DINERO</button>
                     <button type="button" class="btn btn-success" onclick="setCaja()"
@@ -974,6 +974,73 @@
         <!-- modal-dialog -->
     </div>
     <!-- FIN MODAL MENÚ PRINCIPAL -->
+
+    <!-- MODAL SALIDA DINERO  -->
+    <div class="modal fade" id="modalSalidaDinero" tabindex="-1" role="dialog" aria-labelledby="tab_modal">
+        <div class="modal-dialog" role="document" style="width: 1000px;">
+            <div class="modal-content" id="vueSalidaDinero">
+                <div class="modal-body p-0">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="movimientos"><span>{{cantidad}}</span>€</p>
+                        </div>
+                    </div>
+                    <div class="row saleh">
+                        <div style="text-align: center;">
+                            <form name="form">
+                                <!-- <input @click="addNumero(7)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn7" value="7">
+                                <input @click="addNumero(8)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn8" value="8">
+                                <input @click="addNumero(9)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn9" value="9">
+                                <br />
+                                <input @click="addNumero(4)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn4" value="4">
+                                <input @click="addNumero(5)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn5" value="5">
+                                <input @click="addNumero(6)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn6" value="6"><br />
+
+                                <input @click="addNumero(1)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn1" value="1">
+                                <input @click="addNumero(2)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn2" value="2">
+                                <input @click="addNumero(3)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn3" value="3"><br />
+                                <input @click="borrarNumero()" class="form-group btn btn-default bttn" type="button"
+                                    name="bttndot" value="">
+                                <input @click="addNumero(0)" class="form-group btn btn-default bttn" type="button"
+                                    name="bttn0" value="0"><br /> -->
+                                <input type="button" value="7" @click="addNumero(7)" class="btn blue text-white">
+                                <input type="button" value="8" @click="addNumero(8)" class="btn blue text-white">
+                                <input type="button" value="9" @click="addNumero(9)" class="btn blue text-white">
+                                <br>
+                                <input type="button" value="4" @click="addNumero(4)" class="btn blue text-white">
+                                <input type="button" value="5" @click="addNumero(5)" class="btn blue text-white">
+                                <input type="button" value="6" @click="addNumero(6)" class="btn blue text-white">
+                                <br>
+                                <input type="button" value="1" @click="addNumero(1)" class="btn blue text-white">
+                                <input type="button" value="2" @click="addNumero(2)" class="btn blue text-white">
+                                <input type="button" value="3" @click="addNumero(3)" class="btn blue text-white">
+                                <br>
+                                <input type="button" value="&lt" @click="borrarNumero()" class="btn blue text-white">
+                                <input type="button" value="0" @click="addNumero(0)" class="btn blue text-white">
+                                <input type="button" value="," @click="addNumero('.')" class="btn blue text-white">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-flat btn-lg" data-dismiss="modal">CANCELAR</button>
+                    <button type="button" class="btn btn-default btn-flat btn-lg">CONFIRMAR</button>
+                </div>
+            </div>
+            <!-- modal-content -->
+        </div>
+        <!-- modal-dialog -->
+    </div>
+    <!-- FIN MODAL SALIDA DINERO  -->
     <div id="loading" class="centradoTotal hide">
         <img src="imagenes/loading.gif" alt="Cargando">
     </div>

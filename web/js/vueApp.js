@@ -248,10 +248,37 @@ function initVueTocGame() {
 
         }
     });
+
+    var salidaDinero = new Vue({
+        el: '#vueSalidaDinero',
+        data: {
+            cantidad: 0,
+            parteEntera: 0,
+            parteDecimal: 0,
+            activo: 0 //activo 0 => Entera || activo 1 => Decimal
+        },
+        methods: {
+            addNumero(x) {
+                this.cantidad = Number(this.cantidad.toString() + x);
+            },
+            borrarNumero() {
+                this.cantidad = Number(this.cantidad.toString().slice(0, -1));
+            }
+        },
+        watch: {
+            parteEntera: function () {
+                this.buscarTrabajadorVue();
+            },
+            parteDecimal: function () {
+                this.buscarTrabajadorVue();
+            }
+        }
+    });
     return {
         caja: vueSetCaja,
         fichajes: vueFichajes,
         peso: vueConPeso,
-        panelInferior: vuePanelInferior
+        panelInferior: vuePanelInferior,
+        salidaDinero: salidaDinero
     };
 }

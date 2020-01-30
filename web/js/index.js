@@ -9,7 +9,6 @@ function startDB() {
         teclado: 'id, arrayTeclado',
         trabajadores: 'idTrabajador, nombre, nombreCorto',
         fichajes: 'idTrabajador, nombre, inicio, final, activo, fichado',
-        //promociones: 'id, nombre, precioFinal, articulosNecesarios',
         promociones: 'id, fechaInicio, fechaFinal, principal, cantidadPrincipal, secundario, cantidadSecundario, precioFinal',
         menus: 'id, nombre, color',
         submenus: 'id, idPadre, nombre, idTeclado, color',
@@ -255,6 +254,10 @@ function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vueSetCa
             notificacion('No hay caja abierta para poder cerrar', 'error');
         }
     });
+}
+
+function abrirModalSalidaDinero() {
+    $("#modalSalidaDinero").modal('show');
 }
 
 function recuentoCajaCierre(idCaja) { //idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador

@@ -75,3 +75,21 @@
       transform: translate(-50%, -50%);
       -webkit-transform: translate(-50%, -50%);
   }
+  .movimientos{
+    font-family: Anton, sans-serif; 
+    font-size: 50px !important; 
+    font-style: normal; 
+    color: white !important; 
+    -webkit-text-stroke: 1px black;
+    text-align: center;
+  }
+  .blue {
+    width: 15%;
+    font-size: 20px;
+    background-color: #55acee;
+    box-shadow: 0px 5px 0px 0px #3C93D5;
+  }
+  
+  .blue:hover {
+    background-color: #6FC6FF;
+  }
