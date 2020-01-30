@@ -29,18 +29,28 @@ function initVueTocGame() {
             }
         }
     });
-
+    /* FICHAJES */
     var vueFichajes = new Vue({
         el: '#vueTablaTrabajadores',
         data: {
             trabajadores: [],
-            fichados: []
+            fichados: [],
+            busqueda: ''
         },
         mounted: function () {
-            this.getTrabajadores();
             this.verFichados();
         },
         methods: {
+            buscarTrabajadorVue: function () {
+                buscarTrabajador(this.busqueda).then(data => {
+                    if (data === null) {
+                        this.trabajadores = [];
+                    }
+                    else {
+                        this.trabajadores = data;
+                    }
+                });
+            },
             setActivo: function (id) {
                 setActivo(id).then(res => {
                     if (res) {
@@ -50,14 +60,6 @@ function initVueTocGame() {
                         console.log('Error 78913');
                         notificacion('Error, no se ha podido establecer activo', 'error');
                     }
-                });
-            },
-            getTrabajadores: function () {
-                db.trabajadores.toArray().then(data => {
-                    this.trabajadores = data;
-                }).catch(err => {
-                    console.log(err);
-                    notificacion('Error en getTrabajadores VUE()', 'error');
                 });
             },
             ficharTrabajador: function (x) {
@@ -118,9 +120,15 @@ function initVueTocGame() {
                     }
                 });
             }
+        },
+        watch: {
+            busqueda: function () {
+                this.buscarTrabajadorVue();
+            }
         }
     });
-
+    /* FINAL FICHAJES */
+    /* CAJA */
     var vueSetCaja = new Vue({
         el: '#vueSetCaja',
         data: {
@@ -188,7 +196,7 @@ function initVueTocGame() {
             }
         }
     });
-
+    /* FINAL CAJA */
     var vuePanelInferior = new Vue({
         el: '#panelInferior',
         data: {

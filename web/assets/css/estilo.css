@@ -56,3 +56,22 @@
       *width: 11.1111111111111111111111111%;
     }
   }
+
+  .botonesMenuPrincipal {
+    border: 2px solid #000; 
+    font-family: 'Luckiest Guy', sans-serif; 
+    font-size: 24px; 
+    letter-spacing:2px; 
+    line-height:18px;
+    white-space:normal;
+    color: black !important; 
+    -webkit-text-stroke: 0.5px white;
+    font-size: 35px;
+  }
+ .centradoTotal {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      -webkit-transform: translate(-50%, -50%);
+  }

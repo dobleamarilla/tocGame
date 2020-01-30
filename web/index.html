@@ -361,7 +361,7 @@
                                     <div class="btn-group">
                                         <button onclick="abrirMenuPrincipal();" class="btn btn-default"
                                             style="background-color:#f19797;font-family: 'Anton', sans-serif; font-size: 20px; font-style: normal; color: black;">
-                                            FICHAR
+                                            MENÚ PRINCIPAL
                                             <div class="ripple-container"></div>
                                         </button>
                                     </div>
@@ -628,7 +628,7 @@
                             <div class="input-group">
                                 <span class="input-group-addon"
                                     style="font-family: 'Anton', sans-serif; font-size: 25px;">Buscar</span>
-                                <input id="filtrar" class="form-control" type="text"
+                                <input v-model="busqueda" class="form-control" type="text"
                                     placeholder="Escribe el nombre aquí">
                             </div>
                             <div class="table-responsive">
@@ -919,6 +919,64 @@
         <!-- modal-dialog -->
     </div>
     <!-- FIN MODAL CLIENTES -->
+    <!-- MODAL MENÚ PRINCIPAL -->
+    <div class="modal fade" id="modalMenuPrincipal" tabindex="-1" role="dialog" aria-labelledby="basic_modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Menú principal</h4>
+                    <ul class="card-actions icons right-top">
+                        <a href="javascript:void(0)" data-dismiss="modal" class="text-white" aria-label="Close">
+                            <i class="zmdi zmdi-close"></i>
+                        </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="btn-group btn-group-justified" role="group">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default botonesMenuPrincipal"
+                                        style="height:80px">Configuración</button>
+                                </div>
+
+                                <div class="btn-group" role="group">
+                                    <button type="button" onclick="abrirMenuFichajes();"
+                                        class="btn btn-default botonesMenuPrincipal" style="height:80px">Fichar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="btn-group btn-group-justified" role="group">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default botonesMenuPrincipal"
+                                        style="height:80px">Pedidos tienda</button>
+                                </div>
+
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default botonesMenuPrincipal"
+                                        style="height:80px">Enviar/recibir
+                                        datos</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-flat btn-lg" data-dismiss="modal">CERRAR</button>
+                </div>
+            </div>
+            <!-- modal-content -->
+        </div>
+        <!-- modal-dialog -->
+    </div>
+    <!-- FIN MODAL MENÚ PRINCIPAL -->
+    <div id="loading" class="centradoTotal hide">
+        <img src="imagenes/loading.gif" alt="Cargando">
+    </div>
     <!-- END MODALS =============================================-->
     <script>window.$ = window.jQuery = require('jquery');</script>
     <script src="js/vue.js"></script>
@@ -939,6 +997,7 @@
     <script src="js/comprobarToc.js"></script>
     <script src="js/underscore-min.js"></script>
     <script src="js/funcionesSockets.js"></script>
+    <script src="js/busquedas.js"></script>
     <script src="js/socket.io.js"></script>
     <script src="assets/js/bootstrap-select.min.js"></script>
 

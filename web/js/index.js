@@ -23,27 +23,7 @@ function startDB() {
     });
 
     var aux = initVueTocGame();
-    (function ($) {
-        $("#modalFichajes").on('hidden.bs.modal', function () {
-            location.reload();
-        });
 
-        $('#filtrar').keyup(function () {
-
-            var rex = new RegExp($(this).val(), 'i');
-
-            $('.buscar tr').hide();
-
-            $('.buscar tr').filter(function () {
-                return rex.test($(this).text());
-            }).show();
-
-        })
-
-    }(jQuery));
-    $('#keyboard').jkeyboard({
-        input: $('#filtrar')
-    });
     vueSetCaja = aux.caja;
     vueFichajes = aux.fichajes;
     vuePeso = aux.peso;
@@ -63,7 +43,11 @@ function redondearPrecio(precio) /* REDONDEA AL SEGUNDO DECIMAL */ {
 }
 
 function abrirMenuPrincipal() {
-    vueFichajes.getTrabajadores();
+    $('#modalMenuPrincipal').modal('show');
+}
+
+function abrirMenuFichajes() {
+    $('#modalMenuPrincipal').modal('hide');
     vueFichajes.verFichados();
     $('#modalFichajes').modal('show');
 }

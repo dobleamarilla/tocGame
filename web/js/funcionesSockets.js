@@ -29,6 +29,8 @@ function cargarTecladoSockets(arraySubmenus, arrayTeclas, arrayArticulos, arrayT
                         db.familias.bulkPut(arrayFamilias).then(function () {
                             db.promociones.bulkPut(arrayPromociones).then(x => {
                                 db.clientes.bulkPut(arrayClientes).then(function () {
+                                    loading.setAttribute("class", "centradoTotal hide");
+                                    $("#modalFichajes").modal('show');
                                     console.log("¡CARGA COMPLETA 100% OK!");
                                     //iniciarToc();
                                 }).catch(err => {
