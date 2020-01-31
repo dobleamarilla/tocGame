@@ -53,7 +53,7 @@ function getParametros() {
     var devolver = new Promise((dev, rej) => {
         db.parametros.toArray().then(data => {
             if (data) {
-                dev(data);
+                dev(data[0]);
             }
             else {
                 dev(null);
