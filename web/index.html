@@ -544,7 +544,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" onclick="alert('llamar a cerrar caja')"
+                    <button type="button" class="btn btn-danger" onclick="abrirModalEntradaDinero();"
                         style="font-family: 'Anton', sans-serif; font-size: 25px; font-style: normal; color: black;">ENTRADA
                         DINERO</button>
                     <button type="button" class="btn btn-warning" onclick="abrirModalSalidaDinero();"
@@ -1019,6 +1019,50 @@
         <!-- modal-dialog -->
     </div>
     <!-- FIN MODAL SALIDA DINERO  -->
+    <!-- MODAL ENTRADA DINERO  -->
+    <div class="modal fade" id="modalEntradaDinero" tabindex="-1" role="dialog" aria-labelledby="tab_modal">
+        <div class="modal-dialog" role="document" style="width: 1000px;">
+            <div class="modal-content" id="vueEntradaDinero">
+                <div class="modal-body p-0">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="movimientos"><span>{{cantidad}}</span> €</p>
+                        </div>
+                    </div>
+                    <div class="row saleh">
+                        <div style="text-align: center;">
+                            <form name="form">
+                                <input type="button" value="7" @click="addNumero(7)" class="btn blue text-white">
+                                <input type="button" value="8" @click="addNumero(8)" class="btn blue text-white">
+                                <input type="button" value="9" @click="addNumero(9)" class="btn blue text-white">
+                                <br>
+                                <input type="button" value="4" @click="addNumero(4)" class="btn blue text-white">
+                                <input type="button" value="5" @click="addNumero(5)" class="btn blue text-white">
+                                <input type="button" value="6" @click="addNumero(6)" class="btn blue text-white">
+                                <br>
+                                <input type="button" value="1" @click="addNumero(1)" class="btn blue text-white">
+                                <input type="button" value="2" @click="addNumero(2)" class="btn blue text-white">
+                                <input type="button" value="3" @click="addNumero(3)" class="btn blue text-white">
+                                <br>
+                                <input type="button" value="&lt" @click="borrarNumero()" class="btn blue text-white">
+                                <input type="button" value="0" @click="addNumero(0)" class="btn blue text-white">
+                                <input type="button" value="," @click="addComa()" class="btn blue text-white">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-flat btn-lg" data-dismiss="modal">CANCELAR</button>
+                    <button id="botonConfirmarEntrada" type="button" class="btn btn-default btn-flat btn-lg"
+                        @click="confirmarEntrada()" style="font-weight: bold;">CONFIRMAR
+                        ENTRADA</button>
+                </div>
+            </div>
+            <!-- modal-content -->
+        </div>
+        <!-- modal-dialog -->
+    </div>
+    <!-- FIN MODAL ENTRADA DINERO  -->
     <div id="loading" class="centradoTotal hide">
         <img src="imagenes/loading.gif" alt="Cargando">
     </div>

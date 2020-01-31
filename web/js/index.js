@@ -28,6 +28,7 @@ function startDB() {
     vuePeso = aux.peso;
     vuePanelInferior = aux.panelInferior;
     vueSalidaDinero = aux.salidaDinero;
+    vueEntradaDinero = aux.entradaDinero;
 
     comprobarConfiguracion().then((res) => {
         if (res) {
@@ -213,97 +214,79 @@ function confirmarCierre() {
         setCerrarCaja();
     }
 }
-function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vueSetCaja.tipo = 1
-    getCurrentCaja().then(idCaja => {
-        if (idCaja !== null) {
-            recuentoCajaCierre(idCaja).then(infoCierre => {
-                getTrabajadorActivo().then(infoTrabajadorActivo => {
-                    let auxVueSetCaja = vueSetCaja;
-                    if (infoTrabajadorActivo !== false) {
-                        db.cajas.where('id').equals(idCaja).modify(function (caja) {
-                            caja.abierta = 0;
-                            caja.finalDependenta = infoTrabajadorActivo.idTrabajador;
-                            caja.finalTime = new Date();
-                            caja.descuadre = (caja.totalApertura + 0 + auxVueSetCaja.getTotal) - (infoCierre.totalEfectivo);
-                            caja.recaudado = infoCierre.totalEfectivo - caja.descuadre - caja.totalApertura; //En efectivo real nuevo, es decir, sin contar inicio apertura
-                            caja.totalCierre = infoCierre.totalVendido - caja.descuadre;
-                        }).then(function () {
-                            setCurrentCaja(null).then(res => {
-                                if (res) {
-                                    auxVueSetCaja.tipo = 1;
-                                    notificacion('Caja cerrada', 'success');
-                                    location.reload();
-                                }
-                                else {
-                                    console.log('Error en setCurrentCaja() 4567');
-                                    notificacion('Error en setCurrentCaja()', 'error');
-                                }
-                            });
-                        }).catch(err => {
-                            console.log(err);
-                            notificacion('Error en setCerrarCaja modify cajas', 'error');
-                        });
-                    } else {
-                        console.log('Error 7618167');
-                        console.log(infoTrabajadorActivo);
+async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vueSetCaja.tipo = 1
+
+    var idCaja = await getCurrentCaja();
+    var fechaFin = new Date();
+    if (idCaja !== null) {
+        var infoCierre = await recuentoCajaCierre(idCaja);
+        var infoTrabajadorActivo = await getTrabajadorActivo();
+        var datosCaja = await getTotalAperturaCaja(idCaja);
+
+        let auxVueSetCaja = vueSetCaja;
+        let totalEfectivoDependientas = vueSetCaja.getTotal;
+        let totalEfectivoCajaActualDependientas = totalEfectivoDependientas - (datosCaja.totalApertura);
+        if (infoTrabajadorActivo !== false) {
+            await db.cajas.where('id').equals(idCaja).modify(function (caja) {
+                caja.abierta = 0;
+                caja.finalDependenta = infoTrabajadorActivo.idTrabajador;
+                caja.finalTime = fechaFin;
+                caja.descuadre = (caja.totalApertura + 0 + totalEfectivoCajaActualDependientas) - (infoCierre.totalEfectivo);
+                caja.recaudado = infoCierre.totalEfectivo - caja.descuadre - caja.totalApertura; //En efectivo real nuevo, es decir, sin contar inicio apertura
+                caja.totalCierre = infoCierre.totalVendido - caja.descuadre;
+
+            }).catch(err => {
+                console.log(err);
+                notificacion('Error en setCerrarCaja modify cajas', 'error');
+            });
+
+            let recuentoSalidas = await recuentoSalidasDinero(idCaja);
+            let recuentoEntradas = await recuentoEntradasDinero(idCaja);
+
+            if (recuentoSalidas !== null && recuentoEntradas !== null) {
+                let calaixFet = totalEfectivoCajaActualDependientas - recuentoSalidas + recuentoEntradas;
+                imprimirTickerCierreCaja({
+                    calaixFet: redondearPrecio(calaixFet),
+                    nombreTrabajador: (await getTrabajadorActivo()).nombre,
+                    descuadre: redondearPrecio(totalEfectivoCajaActualDependientas - infoCierre.totalEfectivo),
+                    nClientes: infoCierre.numeroClientes,
+                    recaudado: redondearPrecio(totalEfectivoCajaActualDependientas),
+                    arrayMovimientos: 0,
+                    nombreTienda: (await getParametros()).nombreTienda,
+                    fechaInicio: datosCaja.inicioTime,
+                    fechaFinal: fechaFin
+
+                });
+                setCurrentCaja(null).then(res => {
+                    if (res) {
+                        auxVueSetCaja.tipo = 1;
+                        notificacion('Caja cerrada', 'success');
+                        location.reload();
+                    }
+                    else {
+                        console.log('Error en setCurrentCaja() 4567');
+                        notificacion('Error en setCurrentCaja()', 'error');
                     }
                 });
-            });
+            }
         }
         else {
-            console.log('No hay caja para cerrar');
-            notificacion('No hay caja abierta para poder cerrar', 'error');
+            console.log('Error 7618167');
+            console.log(infoTrabajadorActivo);
         }
-    });
+    }
+    else {
+        console.log('No hay caja para cerrar');
+        notificacion('No hay caja abierta para poder cerrar', 'error');
+    }
+
 }
 
 function abrirModalSalidaDinero() {
     $("#modalSalidaDinero").modal('show');
 }
-
-function recuentoCajaCierre(idCaja) { //idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador
-    var devolver = new Promise((dev, rej) => {
-        db.tickets.where('idCaja').equals(idCaja).toArray().then(arrayTickets => {
-            if (arrayTickets.length > 0) {
-
-                var totalVendido = 0;
-                var totalEfectivo = 0;
-                var totalTarjeta = 0;
-                var numeroClientes = arrayTickets.length;
-
-                for (let i = 0; i < arrayTickets.length; i++) {
-                    if (arrayTickets[i].tarjeta) {
-                        totalVendido += arrayTickets[i].total;
-                        totalTarjeta += arrayTickets[i].total;
-                    }
-                    else {
-                        if (!arrayTickets[i].tarjeta) {
-                            totalVendido += arrayTickets[i].total;
-                            totalEfectivo += arrayTickets[i].total;
-                        }
-                    }
-                }
-                dev({
-                    totalVendido: totalVendido,
-                    totalEfectivo: totalEfectivo,
-                    totalTarjeta: totalTarjeta,
-                    numeroClientes: numeroClientes
-                });
-            }
-            else {
-                dev({
-                    totalVendido: 0,
-                    totalEfectivo: 0,
-                    totalTarjeta: 0,
-                    numeroClientes: 0
-                });
-            }
-        }).catch(err => {
-            console.log(err);
-            notificacion('Error 147', 'error');
-        });
-    });
-    return devolver;
+function abrirModalEntradaDinero() {
+    $("#modalEntradaDinero").modal('show');
 }
 
 function restarUnidad(x) {
@@ -781,6 +764,7 @@ var vueFichajes = null;
 var vuePeso = null;
 var vuePanelInferior = null;
 var vueSalidaDinero = null;
+var vueEntradaDinero = null;
 
 window.onload = startDB;
 var conexion = null;
@@ -791,26 +775,3 @@ var inicio = 0;
 var currentMenu = 0;
 var currentCaja = null;
 var cosaParaPeso = null;
-/*
-$(document).ready(function () {
-
-    (function ($) {
-
-        $('#filtrar').keyup(function () {
-
-             var rex = new RegExp($(this).val(), 'i');
-
-             $('.buscar tr').hide();
-
-             $('.buscar tr').filter(function () {
-               return rex.test($(this).text());
-             }).show();
-
-        })
-
-    }(jQuery));
-    $('#keyboard').jkeyboard({
-        input: $('#filtrar')
-    });
-});
-*/

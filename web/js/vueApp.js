@@ -270,11 +270,33 @@ function initVueTocGame() {
             }
         }
     });
+    var entradaDinero = new Vue({
+        el: '#vueEntradaDinero',
+        data: {
+            cantidad: ''
+        },
+        methods: {
+            addNumero(x) {
+                this.cantidad = this.cantidad + x;
+            },
+            addComa() {
+                this.cantidad = this.cantidad.replace(',', '') + ',';
+            },
+            borrarNumero() {
+                this.cantidad = this.cantidad.slice(0, -1);
+            },
+            confirmarEntrada() {
+                $('#botonConfirmarEntrada').attr('disabled', true); //El 'enable' con false se hace en la función de la caja.
+                nuevaEntradaDinero(Number(this.cantidad.replace(',', '.')));
+            }
+        }
+    });
     return {
         caja: vueSetCaja,
         fichajes: vueFichajes,
         peso: vueConPeso,
         panelInferior: vuePanelInferior,
-        salidaDinero: salidaDinero
+        salidaDinero: salidaDinero,
+        entradaDinero: entradaDinero
     };
 }

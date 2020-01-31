@@ -77,3 +77,33 @@ function getFichados() {
     });
     return devolver;
 }
+
+function getTotalAperturaCaja(idCaja) {
+    var devolver = new Promise((dev, rej) => {
+        db.cajas.where('id').equals(idCaja).toArray().then(data => {
+            dev(data[0]);
+        }).catch(err => {
+            console.log(err);
+            dev(null);
+        });
+    });
+    return devolver;
+}
+
+// function getNombreTrabajadorApertura(idCaja) {
+//     var devolver = new Promise((dev, rej) => {
+//         db.cajas.where('id').equals(idCaja).toArray().then(data => {
+//             db.trabajadores.where("idTrabajador").equals(data[0].inicioDependenta).toArray().then(info => {
+//                 dev(info[0].nombre);
+//             }).catch(err => {
+//                 console.log(err);
+//                 notificacion('Error en db.trabajadores de getNombreTrabajadorCierre', 'error');
+//                 dev(null);
+//             });
+//         }).catch(err => {
+//             console.log(err);
+//             dev(null);
+//         });
+//     });
+//     return devolver;
+// }

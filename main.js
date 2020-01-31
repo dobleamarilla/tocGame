@@ -60,6 +60,15 @@ app.on('ready', () => {
 
         impresora.imprimirTicketSalida(args, event);
     });
+    ipcMain.on('imprimirEntradaDinero', (event, args) => {
+
+        impresora.imprimirTicketEntrada(args, event);
+    });
+    ipcMain.on('imprimirCierreCaja', (event, args) => {
+
+        //console.log(args);
+        impresora.imprimirTicketCierreCaja(args, event);
+    });
     ipcMain.on('tecladoVirtual', (event, args) => {
         if (os.platform() === 'win32') { //
             console.log("Hey, soy windows!");

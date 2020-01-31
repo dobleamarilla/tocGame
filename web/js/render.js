@@ -20,7 +20,7 @@ ipcRenderer.on('imprimir', (ev, args) => {
 
 });
 ipcRenderer.on('falloImpresora', (ev, data) => {
-    notificacion(data, 'error');
+    //notificacion(data, 'error');
 });
 /* FIN RESPUESTAS ACCIONES IPC-MAIN */
 
@@ -35,4 +35,10 @@ function cerrarPrograma() {
 }
 function imprimirSalidaDinero(data) {
     ipcRenderer.send('imprimirSalidaDinero', data);
+}
+function imprimirEntradaDinero(data) {
+    ipcRenderer.send('imprimirEntradaDinero', data);
+}
+function imprimirTickerCierreCaja(data) {
+    ipcRenderer.send('imprimirCierreCaja', data);
 }
