@@ -52,7 +52,6 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa)
                 .cut('PAPER_FULL_CUT')
                 .close()
         });
-        device.close();
     }
     catch (err) {
         errorImpresora(err, event);
@@ -82,7 +81,6 @@ var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDepe
                 .cut()
                 .close()
         });
-        device.close();
     }
     catch (err) {
         errorImpresora(err, event);
