@@ -65,24 +65,22 @@ var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDepe
         //var device = new escpos.Serial('COM1') //SERIE
         var options = { encoding: "GB18030" };
         var printer = new escpos.Printer(device, options);
-
-        device.open(() => {
-            printer.image(image).then(() =>
-                printer
-                    .align('CT')
-                    .size(1, 1)
-                    .text(nombreTienda)
-                    .text(fecha)
-                    .text("Dependienta: " + nombreDependienta)
-                    .text("Retirada efectivo: " + totalRetirado)
-                    .size(2, 2)
-                    .text(totalRetirado)
-                    .size(1, 1)
-                    .text("Efectivo actual")
-                    .size(2, 2)
-                    .text(cajaActual)
-                    .cut()
-                    .close());
+        device.open(function () {
+            printer
+                .align('CT')
+                .size(1, 1)
+                .text(nombreTienda)
+                .text(fecha)
+                .text("Dependienta: " + nombreDependienta)
+                .text("Retirada efectivo: " + totalRetirado)
+                .size(2, 2)
+                .text(totalRetirado)
+                .size(1, 1)
+                .text("Efectivo actual")
+                .size(2, 2)
+                .text(cajaActual)
+                .cut()
+                .close()
         });
         device.close();
     }
