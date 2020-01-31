@@ -3,7 +3,8 @@ socket.on('install-licencia', (data) => {
         db.parametros.put({
             licencia: data.licencia,
             nombreEmpresa: data.nombreEmpresa,
-            database: data.database
+            database: data.database,
+            nombreTienda: data.nombreTienda
         }).then(function () {
             console.log(data.licencia, data.nombreEmpresa, data.database);
         });

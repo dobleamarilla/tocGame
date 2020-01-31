@@ -33,3 +33,6 @@ function abrirTecladoVirtual() {
 function cerrarPrograma() {
     ipcRenderer.send('cerrarToc', true);
 }
+function imprimirSalidaDinero(data) {
+    ipcRenderer.send('imprimirSalidaDinero', data);
+}

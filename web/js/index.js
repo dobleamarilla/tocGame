@@ -12,7 +12,7 @@ function startDB() {
         promociones: 'id, fechaInicio, fechaFinal, principal, cantidadPrincipal, secundario, cantidadSecundario, precioFinal',
         menus: 'id, nombre, color',
         submenus: 'id, idPadre, nombre, idTeclado, color',
-        parametros: 'licencia, nombreEmpresa, database',
+        parametros: 'licencia, nombreEmpresa, database, nombreTienda',
         cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta',
         movimientos: '++id, timestamp, tipo, valor, idCaja',
         clientes: 'id, nombre, tarjetaCliente',
@@ -27,6 +27,7 @@ function startDB() {
     vueFichajes = aux.fichajes;
     vuePeso = aux.peso;
     vuePanelInferior = aux.panelInferior;
+    vueSalidaDinero = aux.salidaDinero;
 
     comprobarConfiguracion().then((res) => {
         if (res) {
@@ -779,6 +780,7 @@ var vueSetCaja = null;
 var vueFichajes = null;
 var vuePeso = null;
 var vuePanelInferior = null;
+var vueSalidaDinero = null;
 
 window.onload = startDB;
 var conexion = null;

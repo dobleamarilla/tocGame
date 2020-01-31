@@ -49,6 +49,22 @@ function getTrabajadorActivo() {
     });
     return devolver;
 }
+function getParametros() {
+    var devolver = new Promise((dev, rej) => {
+        db.parametros.toArray().then(data => {
+            if (data) {
+                dev(data);
+            }
+            else {
+                dev(null);
+            }
+        }).catch(err => {
+            console.log(err);
+            dev(null);
+        });
+    });
+    return devolver;
+}
 
 function getFichados() {
     var devolver = new Promise((dev, rej) => {

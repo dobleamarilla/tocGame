@@ -252,25 +252,21 @@ function initVueTocGame() {
     var salidaDinero = new Vue({
         el: '#vueSalidaDinero',
         data: {
-            cantidad: 0,
-            parteEntera: 0,
-            parteDecimal: 0,
-            activo: 0 //activo 0 => Entera || activo 1 => Decimal
+            cantidad: ''
         },
         methods: {
             addNumero(x) {
-                this.cantidad = Number(this.cantidad.toString() + x);
+                this.cantidad = this.cantidad + x;
+            },
+            addComa() {
+                this.cantidad = this.cantidad.replace(',', '') + ',';
             },
             borrarNumero() {
-                this.cantidad = Number(this.cantidad.toString().slice(0, -1));
-            }
-        },
-        watch: {
-            parteEntera: function () {
-                this.buscarTrabajadorVue();
+                this.cantidad = this.cantidad.slice(0, -1);
             },
-            parteDecimal: function () {
-                this.buscarTrabajadorVue();
+            confirmarSalida() {
+                $('#botonConfirmarSalida').attr('disabled', true); //El 'enable' con false se hace en la función de la caja.
+                nuevaSalidaDinero(Number(this.cantidad.replace(',', '.')));
             }
         }
     });
