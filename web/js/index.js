@@ -222,7 +222,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
         var infoCierre = await recuentoCajaCierre(idCaja);
         var infoTrabajadorActivo = await getTrabajadorActivo();
         var datosCaja = await getInfoCaja(idCaja);
-        var totalTarjeta = await getTotalTarjetaCaja(idCaja); //FALTA
+        //var totalTarjeta = await getTotalTarjetaCaja(idCaja); //FALTA
         let auxVueSetCaja = vueSetCaja;
         let totalEfectivoDependientas = vueSetCaja.getTotal;
         let totalEfectivoCajaActualDependientas = totalEfectivoDependientas - (datosCaja.totalApertura);
@@ -250,20 +250,34 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 recuentoEntradas    = 0;
             }
 
+            var _calaixFet = redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas);
+            var _nombreTrabajador = (await getTrabajadorActivo()).nombre;
+            var _descuadre = redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas - infoCierre.totalEfectivo);
+            var _nClientes = infoCierre.numeroClientes;
+            var _recaudado = redondearPrecio(infoCierre.totalEfectivo + infoCierre.totalTarjeta + _descuadre);
+            var _arrayMovimientos = 0;
+            var _nombreTienda = (await getParametros()).nombreTienda;
+            var _fechaInicio = datosCaja.inicioTime;
+            var _fechaFinal = fechaFin;
+            var _totalSalidas = -recuentoSalidas;
+            var _totalEntradas = recuentoEntradas;
+            var _cInicioCaja = datosCaja.totalApertura;
+            var _cFinalCaja = redondearPrecio(datosCaja.totalApertura + recuentoEntradas + infoCierre.totalEfectivo - recuentoSalidas + _descuadre);
+
             let infoTicketCierre = {
-                calaixFet: redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura),
-                nombreTrabajador: (await getTrabajadorActivo()).nombre,
-                descuadre: redondearPrecio((totalEfectivoDependientas - datosCaja.totalApertura) - infoCierre.totalEfectivo),
-                nClientes: infoCierre.numeroClientes,
-                recaudado: redondearPrecio(totalEfectivoDependientas+totalTarjeta+recuentoSalidas-recuentoEntradas-datosCaja.totalApertura),//totalEfectivoCajaActualDependientas-recuentoSalidas+recuentoEntradas),
-                arrayMovimientos: 0,
-                nombreTienda: (await getParametros()).nombreTienda,
-                fechaInicio: datosCaja.inicioTime,
-                fechaFinal: fechaFin,
-                totalSalidas: -recuentoSalidas,
-                totalEntradas: recuentoEntradas,
-                cInicioCaja: datosCaja.totalApertura,
-                cFinalCaja: redondearPrecio(datosCaja.totalApertura + recuentoEntradas + totalEfectivoDependientas - recuentoSalidas)
+                calaixFet: _calaixFet,
+                nombreTrabajador: _nombreTrabajador,
+                descuadre: _descuadre,
+                nClientes: _nClientes,
+                recaudado: _recaudado,
+                arrayMovimientos: _arrayMovimientos,
+                nombreTienda: _nombreTienda,
+                fechaInicio: _fechaInicio,
+                fechaFinal: _fechaFinal,
+                totalSalidas: _totalSalidas,
+                totalEntradas: _totalEntradas,
+                cInicioCaja: _cInicioCaja,
+                cFinalCaja: _cFinalCaja
 
             };
             await db.cajas.where('id').equals(idCaja).modify(function (caja) {
@@ -279,7 +293,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 notificacion('Error en setCerrarCaja modify cajas', 'error');
             });
 
-            console.log("totalEfectivoDependientas: ", totalEfectivoDependientas, "totalTarjeta: ", totalTarjeta, "recuentoSalidas: ", recuentoSalidas, "recuentoEntradas: ", recuentoEntradas, "datosCaja.totalApertura: ", datosCaja.totalApertura);
+            console.log("totalEfectivoDependientas: ", totalEfectivoDependientas, "totalTarjeta: ", infoCierre.totalTarjeta, "recuentoSalidas: ", recuentoSalidas, "recuentoEntradas: ", recuentoEntradas, "datosCaja.totalApertura: ", datosCaja.totalApertura);
             console.log(infoTicketCierre);
             imprimirTickerCierreCaja(infoTicketCierre);
             setCurrentCaja(null).then(res => {

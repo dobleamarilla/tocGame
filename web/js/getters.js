@@ -89,23 +89,23 @@ function getInfoCaja(idCaja) {
     });
     return devolver;
 }
-function getTotalTarjetaCaja(idCaja)
-{
-    var devolver = new Promise((dev, rej) => {
-        db.tickets.where('idCaja').equals(1).toArray().then(data => {
-            let suma = 0;
-            for(let i = 0; i < data.length; i++)
-            {
-                suma += data[i].total;
-            }
-            dev(suma);
-        }).catch(err => {
-            console.log(err);
-            dev(null);
-        });
-    });
-    return devolver;
-}
+// function getTotalTarjetaCaja(idCaja)
+// {
+//     var devolver = new Promise((dev, rej) => {
+//         db.tickets.where('idCaja').equals(idCaja).toArray().then(data => {
+//             let suma = 0;
+//             for(let i = 0; i < data.length; i++)
+//             {
+//                 suma += data[i].total;
+//             }
+//             dev(suma);
+//         }).catch(err => {
+//             console.log(err);
+//             dev(null);
+//         });
+//     });
+//     return devolver;
+// }
 // function getNombreTrabajadorApertura(idCaja) {
 //     var devolver = new Promise((dev, rej) => {
 //         db.cajas.where('id').equals(idCaja).toArray().then(data => {
