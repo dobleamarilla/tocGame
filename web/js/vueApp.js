@@ -8,7 +8,8 @@ function initVueTocGame() {
         },
         methods: {
             addItemPeso() {
-                addItemCesta(cosaParaPeso.idArticulo, cosaParaPeso.nombreArticulo, cosaParaPeso.precio, cosaParaPeso.sumable, this.gramos);
+                console.log("VUE! idArticulo: ", cosaParaPeso.idArticulo, "nombreArticulo: ", cosaParaPeso.nombreArticulo, "precio: ", cosaParaPeso.precio, "sumable", cosaParaPeso.sumable, "gramos: ", this.gramos);
+                addItemCesta(cosaParaPeso.idArticulo, cosaParaPeso.nombreArticulo, cosaParaPeso.precio, cosaParaPeso.sumable, cosaParaPeso.idBoton, this.gramos);
                 this.gramos = 0;
                 $('#modalAPeso').modal('hide');
             },

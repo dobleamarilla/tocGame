@@ -117,7 +117,7 @@ function recuentoCajaCierre(idCaja) { //idTicket, timestamp, total, cesta, tarje
     });
     return devolver;
 }
-//id, timestamp, tipo, valor, idCaja
+/* VALORES ABSOLUTOS */
 function recuentoSalidasDinero(idCaja) {
     var devolver = new Promise((dev, rej) => {
         db.movimientos.where({ tipo: TIPO_SALIDA_DINERO, idCaja: idCaja }).toArray(arraySalidas => {
@@ -134,6 +134,7 @@ function recuentoSalidasDinero(idCaja) {
     });
     return devolver;
 }
+/* VALORES ABSOLUTOS */
 function recuentoEntradasDinero(idCaja) {
     var devolver = new Promise((dev, rej) => {
         db.movimientos.where({ tipo: TIPO_ENTRADA_DINERO, idCaja: idCaja }).toArray(arrayEntradas => {

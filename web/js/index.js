@@ -221,57 +221,68 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
     if (idCaja !== null) {
         var infoCierre = await recuentoCajaCierre(idCaja);
         var infoTrabajadorActivo = await getTrabajadorActivo();
-        var datosCaja = await getTotalAperturaCaja(idCaja);
-
+        var datosCaja = await getInfoCaja(idCaja);
+        var totalTarjeta = await getTotalTarjetaCaja(idCaja); //FALTA
         let auxVueSetCaja = vueSetCaja;
         let totalEfectivoDependientas = vueSetCaja.getTotal;
         let totalEfectivoCajaActualDependientas = totalEfectivoDependientas - (datosCaja.totalApertura);
+
         if (infoTrabajadorActivo !== false) {
-            await db.cajas.where('id').equals(idCaja).modify(function (caja) {
-                caja.abierta = 0;
-                caja.finalDependenta = infoTrabajadorActivo.idTrabajador;
-                caja.finalTime = fechaFin;
-                caja.descuadre = (caja.totalApertura + 0 + totalEfectivoCajaActualDependientas) - (infoCierre.totalEfectivo);
-                caja.recaudado = infoCierre.totalEfectivo - caja.descuadre - caja.totalApertura; //En efectivo real nuevo, es decir, sin contar inicio apertura
-                caja.totalCierre = infoCierre.totalVendido - caja.descuadre;
+            // await db.cajas.where('id').equals(idCaja).modify(function (caja) {
+            //     caja.abierta = 0;
+            //     caja.finalDependenta = infoTrabajadorActivo.idTrabajador;
+            //     caja.finalTime = fechaFin;
+            //     caja.descuadre = (caja.totalApertura + 0 + totalEfectivoCajaActualDependientas) - (infoCierre.totalEfectivo);
+            //     caja.recaudado = infoCierre.totalEfectivo - caja.descuadre - caja.totalApertura; //En efectivo real nuevo, es decir, sin contar inicio apertura
+            //     caja.totalCierre = infoCierre.totalVendido - caja.descuadre;
 
-            }).catch(err => {
-                console.log(err);
-                notificacion('Error en setCerrarCaja modify cajas', 'error');
-            });
+            // }).catch(err => {
+            //     console.log(err);
+            //     notificacion('Error en setCerrarCaja modify cajas', 'error');
+            // });
 
-            let recuentoSalidas = await recuentoSalidasDinero(idCaja);
-            let recuentoEntradas = await recuentoEntradasDinero(idCaja);
+            let recuentoSalidas     = await recuentoSalidasDinero(idCaja);
+            let recuentoEntradas    = await recuentoEntradasDinero(idCaja);
 
-            if (recuentoSalidas !== null && recuentoEntradas !== null) {
-                let calaixFet = totalEfectivoCajaActualDependientas - recuentoSalidas + recuentoEntradas;
-                imprimirTickerCierreCaja({
-                    calaixFet: redondearPrecio(calaixFet),
-                    nombreTrabajador: (await getTrabajadorActivo()).nombre,
-                    descuadre: redondearPrecio(totalEfectivoCajaActualDependientas - infoCierre.totalEfectivo),
-                    nClientes: infoCierre.numeroClientes,
-                    recaudado: redondearPrecio(totalEfectivoCajaActualDependientas),
-                    arrayMovimientos: 0,
-                    nombreTienda: (await getParametros()).nombreTienda,
-                    fechaInicio: datosCaja.inicioTime,
-                    fechaFinal: fechaFin
-
-                });
-                setCurrentCaja(null).then(res => {
-                    if (res) {
-                        auxVueSetCaja.tipo = 1;
-                        notificacion('Caja cerrada', 'success');
-                        location.reload();
-                    }
-                    else {
-                        console.log('Error en setCurrentCaja() 4567');
-                        notificacion('Error en setCurrentCaja()', 'error');
-                    }
-                });
+            if (recuentoSalidas === null && recuentoEntradas === null) 
+            {
+                recuentoSalidas     = 0;
+                recuentoEntradas    = 0;
             }
+
+            let infoTicketCierre = {
+                calaixFet: redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura),
+                nombreTrabajador: (await getTrabajadorActivo()).nombre,
+                descuadre: redondearPrecio((totalEfectivoDependientas - datosCaja.totalApertura) - infoCierre.totalEfectivo),
+                nClientes: infoCierre.numeroClientes,
+                recaudado: redondearPrecio(totalEfectivoDependientas+totalTarjeta+recuentoSalidas-recuentoEntradas-datosCaja.totalApertura),//totalEfectivoCajaActualDependientas-recuentoSalidas+recuentoEntradas),
+                arrayMovimientos: 0,
+                nombreTienda: (await getParametros()).nombreTienda,
+                fechaInicio: datosCaja.inicioTime,
+                fechaFinal: fechaFin,
+                totalSalidas: -recuentoSalidas,
+                totalEntradas: recuentoEntradas,
+                cInicioCaja: datosCaja.totalApertura,
+                cFinalCaja: redondearPrecio(datosCaja.totalApertura + recuentoEntradas + totalEfectivoDependientas - recuentoSalidas)
+
+            };
+            console.log("totalEfectivoDependientas: ", totalEfectivoDependientas, "totalTarjeta: ", totalTarjeta, "recuentoSalidas: ", recuentoSalidas, "recuentoEntradas: ", recuentoEntradas, "datosCaja.totalApertura: ", datosCaja.totalApertura);
+            console.log(infoTicketCierre);
+            imprimirTickerCierreCaja(infoTicketCierre);
+            setCurrentCaja(null).then(res => {
+                if (res) {
+                    auxVueSetCaja.tipo = 1;
+                    notificacion('Caja cerrada', 'success');
+                    //location.reload();
+                }
+                else {
+                    console.log('Error en setCurrentCaja() 4567');
+                    notificacion('Error en setCurrentCaja()', 'error');
+                }
+            });
         }
         else {
-            console.log('Error 7618167');
+            notificacion('No hay trabajador activo', 'error');
             console.log(infoTrabajadorActivo);
         }
     }
@@ -506,37 +517,47 @@ function nuevoArticulo(idArticulo, nombreArticulo, precioArticulo, ivaArticulo) 
 
 async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton, gramos = false) //id, nombre, precio, iva, aPeso
 {
+    console.log("idArticulo: ", idArticulo, "nombreArticulo: ", nombreArticulo, "precio: " , precio, "sumable: ", sumable, "idBoton: ", idBoton, "gramos: ", gramos);
     $('#' + idBoton).attr('disabled', true);
-    if (sumable === 1 || gramos !== false) {
+    if (sumable === 1 || gramos !== false) 
+    {
         var res = await db.cesta.get(idArticulo);
-        if (res) {
+        if (res) 
+        {
             let uds = res.unidades + 1;
             let subt = res.subtotal + precio;
-            if (!gramos) {
+            if (!gramos) 
+            {
                 let updated = await db.cesta.update(idArticulo, { unidades: uds, subtotal: redondearPrecio(subt), activo: false });
-                if (updated) {
+                if (updated) 
+                {
                     await buscarOfertas();
                 }
-                else {
+                else 
+                {
                     notificacion('La cesta no se ha actualizado', 'error');
                 }
             }
-            else {
+            else 
+            {
                 await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false }).catch(err => {
                     console.log(err);
                     notificacion('Error 456', 'error');
                 });
             }
         }
-        else {
-            if (!gramos) {
+        else 
+        {
+            if (!gramos) 
+            {
                 await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio, promocion: -1, activo: false }).catch(err => {
                     notificacion('Error 2431', 'error');
                     console.log(err);
                 });
                 await buscarOfertas();
             }
-            else {
+            else 
+            {
                 await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false }).catch(err => {
                     console.log(err);
                     notificacion('Error 4566', 'error');
@@ -547,7 +568,7 @@ async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton
     }
     else //Va por peso
     {
-        cosaParaPeso = { idArticulo: idArticulo, nombreArticulo: nombreArticulo, precio: precio, sumable: sumable };
+        cosaParaPeso = { idArticulo: idArticulo, nombreArticulo: nombreArticulo, precio: precio, sumable: sumable, idBoton: idBoton };
         vuePeso.cosaParaPeso = cosaParaPeso;
         console.log(vuePeso.cosaParaPeso);
         $('#modalAPeso').modal('show');
