@@ -266,6 +266,19 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 cFinalCaja: redondearPrecio(datosCaja.totalApertura + recuentoEntradas + totalEfectivoDependientas - recuentoSalidas)
 
             };
+            await db.cajas.where('id').equals(idCaja).modify(function (caja) {
+                caja.abierta = 0;
+                caja.finalDependenta = infoTrabajadorActivo.idTrabajador;
+                caja.finalTime = fechaFin;
+                caja.descuadre = infoTicketCierre.descuadre;
+                caja.recaudado = infoTicketCierre.recaudado;
+                caja.totalCierre = infoTicketCierre.cFinalCaja;
+
+            }).catch(err => {
+                console.log(err);
+                notificacion('Error en setCerrarCaja modify cajas', 'error');
+            });
+
             console.log("totalEfectivoDependientas: ", totalEfectivoDependientas, "totalTarjeta: ", totalTarjeta, "recuentoSalidas: ", recuentoSalidas, "recuentoEntradas: ", recuentoEntradas, "datosCaja.totalApertura: ", datosCaja.totalApertura);
             console.log(infoTicketCierre);
             imprimirTickerCierreCaja(infoTicketCierre);
