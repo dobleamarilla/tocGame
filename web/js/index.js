@@ -258,7 +258,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
             var _arrayMovimientos = 0;
             var _nombreTienda = (await getParametros()).nombreTienda;
             var _fechaInicio = datosCaja.inicioTime;
-            var _fechaFinal = fechaFin;
+
             var _totalSalidas = -recuentoSalidas;
             var _totalEntradas = recuentoEntradas;
             var _cInicioCaja = datosCaja.totalApertura;
@@ -273,7 +273,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 arrayMovimientos: _arrayMovimientos,
                 nombreTienda: _nombreTienda,
                 fechaInicio: _fechaInicio,
-                fechaFinal: _fechaFinal,
+                fechaFinal: fechaFin,
                 totalSalidas: _totalSalidas,
                 totalEntradas: _totalEntradas,
                 cInicioCaja: _cInicioCaja,

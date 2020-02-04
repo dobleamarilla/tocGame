@@ -5,8 +5,8 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa)
     try {
         var device = new escpos.USB('0x4B8', '0x202'); //USB
         //var device = new escpos.Serial('COM1') //SERIE
-        var options = { encoding: "GB18030" };
-        var printer = new escpos.Printer(device, options);
+        //var options = { encoding: "latin1" };
+        var printer = new escpos.Printer(device);
 
         var detalles = '';
         var pagoTarjeta = '';
@@ -20,7 +20,7 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa)
 
         device.open(function () {
             printer
-                .encode('EUC-KR')
+                .encode('latin1')
                 .size(2, 2)
                 .text('365')
                 .size(1, 1)
@@ -39,7 +39,7 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa)
                 .text(detalles)
                 .text(pagoTarjeta)
                 .size(2, 2)
-                .text('TOTAL: ' + total + ' EUR')
+                .text('TOTAL: ' + total + ' EUR \n€')
                 .size(1, 1)
                 .text('IVA 10% : ' + (total / 1.1).toFixed(2) + ' EUR')
                 .text('-- ES COPIA --')
@@ -112,6 +112,7 @@ var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDe
                 .size(2, 2)
                 .text(cajaActual)
                 .text('')
+                .barcode('9933500329672', "CODE39")
                 .text('')
                 .text('')
                 .text('')
@@ -137,9 +138,10 @@ var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClien
     // console.log(fechaFinal);
     // console.log("---- FINAL TEST ----");
     try {
+        console.log("La fecha inicio es: ", fechaInicio.getDate());
         var device = new escpos.USB('0x4B8', '0x202'); //USB
         //var device = new escpos.Serial('COM1') //SERIE
-        var options = { encoding: "GB18030" };
+        var options = { encoding: "ISO-8859-15"}; //"GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
 
