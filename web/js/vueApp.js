@@ -253,7 +253,8 @@ function initVueTocGame() {
     var salidaDinero = new Vue({
         el: '#vueSalidaDinero',
         data: {
-            cantidad: ''
+            cantidad: '',
+            concepto: 'Entrega diaria'
         },
         methods: {
             addNumero(x) {
@@ -267,7 +268,7 @@ function initVueTocGame() {
             },
             confirmarSalida() {
                 $('#botonConfirmarSalida').attr('disabled', true); //El 'enable' con false se hace en la función de la caja.
-                nuevaSalidaDinero(Number(this.cantidad.replace(',', '.')));
+                nuevaSalidaDinero(Number(this.cantidad.replace(',', '.')), this.concepto);
             }
         }
     });

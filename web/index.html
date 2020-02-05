@@ -981,12 +981,15 @@
             <div class="modal-content" id="vueSalidaDinero">
                 <div class="modal-body p-0">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-8 text-center">
                             <p class="movimientos"><span>{{cantidad}}</span> €</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <p class="movimientos"><span>CONCEPTO</span></p>
                         </div>
                     </div>
                     <div class="row saleh">
-                        <div style="text-align: center;">
+                        <div class="col-md-8 text-center"><!-- style="text-align: left;">-->
                             <form name="form">
                                 <input type="button" value="7" @click="addNumero(7)" class="btn blue text-white">
                                 <input type="button" value="8" @click="addNumero(8)" class="btn blue text-white">
@@ -1004,6 +1007,9 @@
                                 <input type="button" value="0" @click="addNumero(0)" class="btn blue text-white">
                                 <input type="button" value="," @click="addComa()" class="btn blue text-white">
                             </form>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <textarea name="concepto" id="" cols="30" rows="7">{{concepto}}</textarea>
                         </div>
                     </div>
                 </div>

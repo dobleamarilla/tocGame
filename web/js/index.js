@@ -14,7 +14,7 @@ function startDB() {
         submenus: 'id, idPadre, nombre, idTeclado, color',
         parametros: 'licencia, nombreEmpresa, database, nombreTienda',
         cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta',
-        movimientos: '++id, timestamp, tipo, valor, idCaja',
+        movimientos: '++id, timestamp, tipo, valor, idCaja, concepto',
         clientes: 'id, nombre, tarjetaCliente',
         familias: 'nombre, padre',
         activo: 'idTrabajador',
@@ -208,12 +208,14 @@ function setAbrirCaja() {
         notificacion('Error 154', 'error');
     });
 }
+
 function confirmarCierre() {
     confirm("¿Estás segur@ de cerrar la caja?")
     {
         setCerrarCaja();
     }
 }
+
 async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vueSetCaja.tipo = 1
 
     var idCaja = await getCurrentCaja();
@@ -255,7 +257,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
             var _descuadre = redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas - infoCierre.totalEfectivo);
             var _nClientes = infoCierre.numeroClientes;
             var _recaudado = redondearPrecio(infoCierre.totalEfectivo + infoCierre.totalTarjeta + _descuadre);
-            var _arrayMovimientos = 0;
+            var _arrayMovimientos = await db.movimientos.where('idCaja').equals(idCaja).toArray();
             var _nombreTienda = (await getParametros()).nombreTienda;
             var _fechaInicio = datosCaja.inicioTime;
 
@@ -264,7 +266,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
             var _cInicioCaja = datosCaja.totalApertura;
             var _cFinalCaja = redondearPrecio(datosCaja.totalApertura + recuentoEntradas + infoCierre.totalEfectivo - recuentoSalidas + _descuadre);
 
-            let infoTicketCierre = {
+            var infoTicketCierre = {
                 calaixFet: _calaixFet,
                 nombreTrabajador: _nombreTrabajador,
                 descuadre: _descuadre,
@@ -272,7 +274,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 recaudado: _recaudado,
                 arrayMovimientos: _arrayMovimientos,
                 nombreTienda: _nombreTienda,
-                fechaInicio: _fechaInicio,
+                fechaInicio: datosCaja.inicioTime,
                 fechaFinal: fechaFin,
                 totalSalidas: _totalSalidas,
                 totalEntradas: _totalEntradas,

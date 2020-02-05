@@ -1,6 +1,10 @@
 var escpos = require('escpos');
 var exec = require('child_process').exec;
 var os = require('os');
+
+const TIPO_SALIDA_DINERO = 1;
+const TIPO_ENTRADA_DINERO = 2;
+
 var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa) {
     try {
         var device = new escpos.USB('0x4B8', '0x202'); //USB
@@ -58,7 +62,7 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa)
     }
 }
 
-var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDependienta, nombreTienda) {
+var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDependienta, nombreTienda, concepto) {
     try {
         var device = new escpos.USB('0x4B8', '0x202'); //USB
         //var device = new escpos.Serial('COM1') //SERIE
@@ -75,9 +79,9 @@ var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDepe
                 .size(2, 2)
                 .text(totalRetirado)
                 .size(1, 1)
-                .text("Efectivo actual")
+                .text("Concepto")
                 .size(2, 2)
-                .text(cajaActual)
+                .text(concepto)
                 .text('')
                 .text('')
                 .text('')
@@ -125,7 +129,7 @@ var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDe
     }
 }
 
-var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClientes, recaudado, arrayMovimientos, nombreTienda, fechaInicio, fechaFinal) {
+var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClientes, recaudado, arrayMovimientos, nombreTienda, fI, fF) {
     // console.log("---- INICIO TEST ----");
     // console.log(calaixFet);
     // console.log(nombreTrabajador);
@@ -137,10 +141,27 @@ var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClien
     // console.log(fechaInicio);
     // console.log(fechaFinal);
     // console.log("---- FINAL TEST ----");
+    //fechaInicio = new Date();
     try {
-        console.log("La fecha inicio es: ", fechaInicio.getDate());
+        var fechaInicio     = new Date(fI);
+        var fechaFinal      = new Date(fF);
+
+        var textoMovimientos = '';
+        for(let i = 0; i < arrayMovimientos.length; i++)
+        {
+            var auxFecha = new Date(arrayMovimientos[i].timestamp);
+            if(arrayMovimientos[i].tipo === TIPO_SALIDA_DINERO)
+            {
+                textoMovimientos += `${i+1}: Salida:\n           Cantidad: -${arrayMovimientos[i].valor}\n           Fecha: ${auxFecha.getDate()}/${auxFecha.getMonth()}/${auxFecha.getFullYear()}  ${auxFecha.getHours()}:${auxFecha.getMinutes()}\n           Concepto: ${arrayMovimientos[i].concepto}\n`;
+            }
+            if(arrayMovimientos[i].tipo === TIPO_ENTRADA_DINERO)
+            {
+                textoMovimientos += `${i+1}: Entrada:\n            Cantidad: +${arrayMovimientos[i].valor}\n            Fecha: ${auxFecha.getDate()}/${auxFecha.getMonth()}/${auxFecha.getFullYear()}  ${auxFecha.getHours()}:${auxFecha.getMinutes()}\n            Concepto: ${arrayMovimientos[i].concepto}\n`;
+            }
+            auxFecha = null;
+        }
+
         var device = new escpos.USB('0x4B8', '0x202'); //USB
-        //var device = new escpos.Serial('COM1') //SERIE
         var options = { encoding: "ISO-8859-15"}; //"GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
@@ -165,9 +186,9 @@ var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClien
                 .text('')
                 .size(1, 1)
                 .text('Moviments de caixa')
-                .align('CT')
                 .text('')
                 .text('')
+                .text(textoMovimientos)
                 .text('')
                 .cut()
                 .close()
@@ -198,8 +219,7 @@ exports.imprimirTicket = function (req, event) {
 }
 
 exports.imprimirTicketSalida = function (req, event) {
-
-    salidaDinero(event, req.cantidad, req.cajaActual, req.fecha, req.nombreTrabajador, req.nombreTienda);
+    salidaDinero(event, req.cantidad, req.cajaActual, req.fecha, req.nombreTrabajador, req.nombreTienda, req.concepto);
 }
 
 exports.imprimirTicketEntrada = function (req, event) {

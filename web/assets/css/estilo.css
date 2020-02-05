@@ -79,7 +79,7 @@
     font-family: Anton, sans-serif; 
     font-size: 50px !important; 
     font-style: normal; 
-    color: white !important; 
+    color:#000000 !important; 
     -webkit-text-stroke: 1px black;
     text-align: center;
   }

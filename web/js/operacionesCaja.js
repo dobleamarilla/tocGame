@@ -1,7 +1,7 @@
 const TIPO_SALIDA_DINERO = 1;
 const TIPO_ENTRADA_DINERO = 2;
 
-async function nuevaSalidaDinero(cantidad) {
+async function nuevaSalidaDinero(cantidad, concepto) {
     let fecha = new Date();
     let nombreTrabajador = (await getTrabajadorActivo()).nombre;
     let nombreTienda = (await getParametros()).nombreTienda;
@@ -13,7 +13,8 @@ async function nuevaSalidaDinero(cantidad) {
                 timestamp: fecha,
                 tipo: TIPO_SALIDA_DINERO,
                 valor: cantidad,
-                idCaja: idCaja
+                idCaja: idCaja,
+                concepto: concepto
             }).then(function () {
                 $('#botonConfirmarSalida').attr('disabled', false);
                 $("#modalSalidaDinero").modal('hide');
@@ -22,7 +23,7 @@ async function nuevaSalidaDinero(cantidad) {
                     fecha: fecha,
                     nombreTrabajador: nombreTrabajador,
                     nombreTienda: nombreTienda,
-                    cajaActual: cajaActual
+                    concepto: concepto
                 });
                 notificacion('Salida de dinero OK!', 'success');
             }).catch(err => {
