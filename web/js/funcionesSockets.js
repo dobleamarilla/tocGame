@@ -1,5 +1,5 @@
 /* ESTA FUNCIÓN HAY QUE CAMBIARLA DE NOMBRE, NO HACE LO QUE DICE, CARGA TODO */
-function cargarTecladoSockets(arraySubmenus, arrayTeclas, arrayArticulos, arrayTrabajadores, arrayFamilias, arrayPromociones, arrayClientes) {
+function cargarTecladoSockets(arraySubmenus, arrayTeclas, arrayArticulos, arrayTrabajadores, arrayFamilias, arrayPromociones, arrayClientes, arrayParametrosTicket) {
     //1 - Limpiar teclado.
     clearKeyboard().then(function (res) {
         var submenus = [];
@@ -29,10 +29,15 @@ function cargarTecladoSockets(arraySubmenus, arrayTeclas, arrayArticulos, arrayT
                         db.familias.bulkPut(arrayFamilias).then(function () {
                             db.promociones.bulkPut(arrayPromociones).then(x => {
                                 db.clientes.bulkPut(arrayClientes).then(function () {
-                                    loading.setAttribute("class", "centradoTotal hide");
-                                    $("#modalFichajes").modal('show');
-                                    console.log("¡CARGA COMPLETA 100% OK!");
-                                    //iniciarToc();
+                                    db.parametrosTicket.bulkPut(arrayParametrosTicket).then(function(){
+                                        loading.setAttribute("class", "centradoTotal hide");
+                                        $("#modalFichajes").modal('show');
+                                        console.log("¡CARGA COMPLETA 100% OK!");
+                                        //iniciarToc();
+                                    }).catch(err=>{
+                                        console.log(err);
+                                        notificacion('Error al insertar parametros de ticket', 'error');
+                                    });
                                 }).catch(err => {
                                     console.log(err);
                                     notificacion('Error al insertar clientes finales', 'error');

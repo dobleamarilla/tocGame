@@ -5,6 +5,7 @@ function startDB() {
     db.version(1).stores({
         cesta: 'idArticulo, nombreArticulo, unidades, subtotal, promocion, activo',
         tickets: '++idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador',
+        parametrosTicket: 'nombreDato, valorDato',
         articulos: 'id, nombre, precio, iva, aPeso, familia',
         teclado: 'id, arrayTeclado',
         trabajadores: 'idTrabajador, nombre, nombreCorto',

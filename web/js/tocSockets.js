@@ -22,7 +22,7 @@ socket.on('cargar-todo', (data) => {
     try {
         if (!data.error) {
             console.log(data);
-            cargarTecladoSockets(data.menus, data.teclas, data.articulos, data.dependentes, data.familias, data.promociones, data.clientes);
+            cargarTecladoSockets(data.menus, data.teclas, data.articulos, data.dependentes, data.familias, data.promociones, data.clientes, data.parametrosTicket);
         }
         else {
             console.log(data.infoError);
