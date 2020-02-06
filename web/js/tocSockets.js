@@ -22,7 +22,10 @@ socket.on('cargar-todo', (data) => {
     try {
         if (!data.error) {
             console.log(data);
-            cargarTecladoSockets(data.menus, data.teclas, data.articulos, data.dependentes, data.familias, data.promociones, data.clientes, data.parametrosTicket);
+            // cargarTecladoSockets(data.menus, data.teclas, data.articulos, data.dependentes, data.familias, data.promociones, data.clientes, data.parametrosTicket);
+            cargarTodo(data.parametrosTicket, data.articulos, data.menus, data.dependentes, data.promociones, data.clientes, data.familias, data.teclas).then(()=>{
+                console.log("LA CARGA HA TERMINADO");
+            });
         }
         else {
             console.log(data.infoError);

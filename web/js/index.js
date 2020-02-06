@@ -3,10 +3,10 @@
 function startDB() {
     db = new Dexie('tocGame');
     db.version(1).stores({
-        cesta: '++idLinea, idArticulo, nombreArticulo, unidades, subtotal, promocion, activo',
+        cesta: '++idLinea, idArticulo, nombreArticulo, unidades, subtotal, promocion, activo, tiposIva',
         tickets: '++idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador',
         parametrosTicket: 'nombreDato, valorDato',
-        articulos: 'id, nombre, precio, iva, aPeso, familia',
+        articulos: 'id, nombre, precio, iva, aPeso, familia, precioBase',
         teclado: 'id, arrayTeclado',
         trabajadores: 'idTrabajador, nombre, nombreCorto',
         fichajes: 'idTrabajador, nombre, inicio, final, activo, fichado',
@@ -547,18 +547,18 @@ function nuevoArticulo(idArticulo, nombreArticulo, precioArticulo, ivaArticulo) 
 
 async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton, gramos = false) //id, nombre, precio, iva, aPeso
 {
-    console.log("idArticulo: ", idArticulo, "nombreArticulo: ", nombreArticulo, "precio: " , precio, "sumable: ", sumable, "idBoton: ", idBoton, "gramos: ", gramos);
+    /* SAGRADO: SUMABLE ES NORMAL, NO SUMABLE ES A PESO */
     $('#' + idBoton).attr('disabled', true);
-    if (sumable === 1 || gramos !== false) 
+    if (sumable || gramos !== false) 
     {
-        var res = await db.cesta.get(idArticulo);
+        var res = await db.cesta.get({idArticulo: idArticulo});
         if (res) 
         {
             let uds = res.unidades + 1;
             let subt = res.subtotal + precio;
-            if (!gramos) 
+            if (!gramos) //PRODUCTO NORMAL
             {
-                let updated = await db.cesta.update(idArticulo, { unidades: uds, subtotal: redondearPrecio(subt), activo: false });
+                let updated = await db.cesta.update(res.idLinea, { unidades: uds, subtotal: redondearPrecio(subt), activo: false });
                 if (updated) 
                 {
                     await buscarOfertas();
@@ -568,7 +568,7 @@ async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton
                     notificacion('La cesta no se ha actualizado', 'error');
                 }
             }
-            else 
+            else  //PRODUCTO A PESO
             {
                 await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false }).catch(err => {
                     console.log(err);
