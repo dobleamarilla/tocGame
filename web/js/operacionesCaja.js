@@ -26,6 +26,7 @@ async function nuevaSalidaDinero(cantidad, concepto) {
                     concepto: concepto
                 });
                 notificacion('Salida de dinero OK!', 'success');
+                vueSalidaDinero.concepto = 'Entrega diaria';
             }).catch(err => {
                 console.log(err);
                 notificacion('Error en getCurrentCaja - nuevaSalidaDinero', 'error');

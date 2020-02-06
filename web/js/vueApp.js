@@ -269,6 +269,9 @@ function initVueTocGame() {
             confirmarSalida() {
                 $('#botonConfirmarSalida').attr('disabled', true); //El 'enable' con false se hace en la función de la caja.
                 nuevaSalidaDinero(Number(this.cantidad.replace(',', '.')), this.concepto);
+            },
+            getConcepto(){
+                return this.concepto;
             }
         }
     });
