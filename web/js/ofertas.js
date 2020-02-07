@@ -88,7 +88,7 @@ async function buscarOfertas() {
             secundarios = await db.articulos.where('id').equals(Number(promociones[i].secundario)).toArray();
         }
         if (cestaOriginal.length > 1 || tipoOferta === OFERTA_INDIVIDUAL) {
-            if (intentoAplicarPromo(promociones[i], principales, secundarios, cestaOriginal, promociones[i].cantidadPrincipal, promociones[i].cantidadSecundario, tipoOferta)) {
+            if (await intentoAplicarPromo(promociones[i], principales, secundarios, cestaOriginal, promociones[i].cantidadPrincipal, promociones[i].cantidadSecundario, tipoOferta)) {
                 await actualizarCesta();
                 break;
             }
@@ -96,7 +96,7 @@ async function buscarOfertas() {
     }
 }
 
-function intentoAplicarPromo(infoPromo, articulosPrincipales, articulosSecundarios, cesta, cantidadPrincipal, cantidadSecundario, tipoOferta) {
+async function intentoAplicarPromo(infoPromo, articulosPrincipales, articulosSecundarios, cesta, cantidadPrincipal, cantidadSecundario, tipoOferta) {
     if (tipoOferta === OFERTA_COMBO) {
         idArticuloPrincipal = null;
         idArticuloSecundario = null;
@@ -128,6 +128,7 @@ function intentoAplicarPromo(infoPromo, articulosPrincipales, articulosSecundari
             cesta = corregirCesta(idArticuloSecundario, cesta);
 
             cesta = insertarOferta(cesta, infoPromo, tipoOferta);
+            cesta = await configurarCestaPromosBaseIvaCombo(cesta, idArticuloPrincipal, idArticuloSecundario, infoPromo);
             insertarCestaCompleta(cesta);
             return true;
         }
@@ -143,6 +144,7 @@ function intentoAplicarPromo(infoPromo, articulosPrincipales, articulosSecundari
                         {
                             cesta = corregirCesta(cesta[i].idArticulo, cesta);
                             cesta = insertarOferta(cesta, infoPromo, tipoOferta);
+                            cesta = await configurarCestaPromosBaseIvaSimple(cesta, infoPromo);
                             insertarCestaCompleta(cesta);
                             return true;
                         }
@@ -153,6 +155,101 @@ function intentoAplicarPromo(infoPromo, articulosPrincipales, articulosSecundari
         }
     }
     return false;
+}
+
+async function configurarCestaPromosBaseIvaSimple(cesta, infoPromo)
+{
+    let infoArticulo = await db.articulos.get(Number(infoPromo.principal));
+    let precioRealArticulo = 0;
+
+    let base1 = 0, base2 = 0, base3 = 0;
+    let valor1 = 0, valor2 = 0, valor3 = 0;
+    let importe1 = 0, importe2 = 0, importe3 = 0;
+
+    for(let i = 0; i < cesta.length; i++)
+    {
+        if(cesta[i].idArticulo === infoPromo.id)
+        {
+            precioRealArticulo = infoPromo.precioFinal; //En las ofertas individuales, el precioFinal es por unidad.
+            switch(infoArticulo.iva)
+            {
+                case 1: base1 = (precioRealArticulo/1.04)*cesta[i].unidades; valor1 = (precioRealArticulo/1.04)*0.04*cesta[i].unidades; importe1 = precioRealArticulo*cesta[i].unidades; break;
+                case 2: base2 = (precioRealArticulo/1.10)*cesta[i].unidades; valor2 = (precioRealArticulo/1.10)*0.10*cesta[i].unidades; importe2 = precioRealArticulo*cesta[i].unidades; break;
+                case 3: base3 = (precioRealArticulo/1.21)*cesta[i].unidades; valor3 = (precioRealArticulo/1.21)*0.21*cesta[i].unidades; importe3 = precioRealArticulo*cesta[i].unidades; break;
+                default: break;
+            }
+            cesta[i].tipoIva = {
+                base1: redondearPrecio(base1*infoPromo.cantidadPrincipal),
+                base2: redondearPrecio(base2*infoPromo.cantidadPrincipal),
+                base3: redondearPrecio(base3*infoPromo.cantidadPrincipal),
+                valorIva1: redondearPrecio(valor1*infoPromo.cantidadPrincipal),
+                valorIva2: redondearPrecio(valor2*infoPromo.cantidadPrincipal),
+                valorIva3: redondearPrecio(valor3*infoPromo.cantidadPrincipal),
+                importe1: redondearPrecio(importe1*infoPromo.cantidadPrincipal),
+                importe2: redondearPrecio(importe2*infoPromo.cantidadPrincipal),
+                importe3: redondearPrecio(importe3*infoPromo.cantidadPrincipal)
+            }
+            break;
+        }
+    }
+    return cesta;
+}
+
+async function configurarCestaPromosBaseIvaCombo(cesta, idArt1, idArt2, infoPromo)
+{
+    let infoArticulo1 = await db.articulos.get(idArt1);
+    let infoArticulo2 = await db.articulos.get(idArt2);
+
+    let precioTotalSinOferta = 0;
+    let porcentajeDto = 0;
+
+    let precioRealArticulo1 = 0;
+    let precioRealArticulo2 = 0;
+
+    let base1 = 0, base2 = 0, base3 = 0;
+    let valor1 = 0, valor2 = 0, valor3 = 0;
+    let importe1 = 0, importe2 = 0, importe3 = 0;
+
+    for(let i = 0; i < cesta.length; i++)
+    {
+        if(cesta[i].idArticulo === infoPromo.id)
+        {
+            precioTotalSinOferta = infoArticulo1.precio + infoArticulo2.precio;
+            precioTotalConOferta = infoPromo.precioFinal;
+            porcentajeDto = ((precioTotalSinOferta-precioTotalConOferta)/precioTotalSinOferta)*100;
+            precioRealArticulo1 = infoArticulo1.precio-(infoArticulo1.precio*(porcentajeDto/100));
+            precioRealArticulo2 = infoArticulo2.precio-(infoArticulo2.precio*(porcentajeDto/100));
+
+            switch(infoArticulo1.iva)
+            {
+                case 1: base1 = (precioRealArticulo1/1.04)*cesta[i].unidades; valor1 = (precioRealArticulo1/1.04)*0.04*cesta[i].unidades; importe1 = precioRealArticulo1*cesta[i].unidades; break;
+                case 2: base2 = (precioRealArticulo1/1.10)*cesta[i].unidades; valor2 = (precioRealArticulo1/1.10)*0.10*cesta[i].unidades; importe2 = precioRealArticulo1*cesta[i].unidades; break;
+                case 3: base3 = (precioRealArticulo1/1.21)*cesta[i].unidades; valor3 = (precioRealArticulo1/1.21)*0.21*cesta[i].unidades; importe3 = precioRealArticulo1*cesta[i].unidades; break;
+                default: break;
+            }
+
+            switch(infoArticulo2.iva)
+            {
+                case 1: base1 += (precioRealArticulo2/1.04)*cesta[i].unidades; valor1 += (precioRealArticulo2/1.04)*0.04*cesta[i].unidades; importe1 += precioRealArticulo2*cesta[i].unidades; break;
+                case 2: base2 += (precioRealArticulo2/1.10)*cesta[i].unidades; valor2 += (precioRealArticulo2/1.10)*0.10*cesta[i].unidades; importe2 += precioRealArticulo2*cesta[i].unidades; break;
+                case 3: base3 += (precioRealArticulo2/1.21)*cesta[i].unidades; valor3 += (precioRealArticulo2/1.21)*0.21*cesta[i].unidades; importe3 += precioRealArticulo2*cesta[i].unidades; break;
+                default: break;
+            }
+            cesta[i].tipoIva = {
+                base1: redondearPrecio(base1),
+                base2: redondearPrecio(base2),
+                base3: redondearPrecio(base3),
+                valorIva1: redondearPrecio(valor1),
+                valorIva2: redondearPrecio(valor2),
+                valorIva3: redondearPrecio(valor3),
+                importe1: redondearPrecio(importe1),
+                importe2: redondearPrecio(importe2),
+                importe3: redondearPrecio(importe3)
+            }
+            break;
+        }
+    }
+    return cesta;
 }
 
 function corregirCesta(idArticulo, cesta) {

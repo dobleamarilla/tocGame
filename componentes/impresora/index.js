@@ -5,7 +5,7 @@ var os = require('os');
 const TIPO_SALIDA_DINERO = 1;
 const TIPO_ENTRADA_DINERO = 2;
 
-var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa) {
+var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa, tiposIva, cabecera, pie) {
     try {
         var device = new escpos.USB('0x4B8', '0x202'); //USB
         //var device = new escpos.Serial('COM1') //SERIE
@@ -15,23 +15,43 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa)
         var detalles = '';
         var pagoTarjeta = '';
         for (let i = 0; i < arrayCompra.length; i++) {
-            detalles += `${arrayCompra[i].cantidad}     ${arrayCompra[i].articuloNombre}   ${arrayCompra[i].importe}\n`;
+            if(arrayCompra[i].articuloNombre.length < 20)
+            {
+                while(arrayCompra[i].articuloNombre.length < 20)
+                {
+                    arrayCompra[i].articuloNombre += ' ';
+                }
+            }
+            detalles += `${arrayCompra[i].cantidad}     ${arrayCompra[i].articuloNombre.slice(0, 20)}       ${arrayCompra[i].importe}\n`;
         }
         var fecha = new Date();
         if (visa) {
             pagoTarjeta = '----------- PAGADO CON TARJETA ---------\n';
         }
 
+        var detalleIva4     = '';
+        var detalleIva10    = '';
+        var detalleIva21    = '';
+        var detalleiva         = '';
+        if(tiposIva.importe1 > 0)
+        {
+            detalleIva4 = `${tiposIva.base1}        4%: ${tiposIva.valor1}      ${tiposIva.importe1}\n`;
+        }
+        if(tiposIva.importe2 > 0)
+        {
+            detalleIva10 = `${tiposIva.base2}        10%: ${tiposIva.valor2}      ${tiposIva.importe2}\n`;
+        }
+        if(tiposIva.importe3 > 0)
+        {
+            detalleIva21 = `${tiposIva.base3}       21%: ${tiposIva.valor3}      ${tiposIva.importe3}\n`;
+        }
+        detalleIva = detalleIva4 + detalleIva10 + detalleIva21;
+
         device.open(function () {
             printer
                 .encode('latin1')
-                .size(2, 2)
-                .text('365')
                 .size(1, 1)
-                .text('Plaza Catalunya, 6')
-                .text('BARCELONA - 08208')
-                .text('NIF: B61957189')
-                .text('Tel. 647 798 051')
+                .text(cabecera)
                 .text('Data: ' + fecha.getDate() + '-' + fecha.getMonth() + '-' + fecha.getFullYear() + ' ' + fecha.getHours() + ':' + fecha.getMinutes())
                 .text('Factura simplificada N: ' + numFactura)
                 .control('LF')
@@ -40,16 +60,17 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa)
                 .control('LF')
                 .text('Quantitat      Article        Import (EUR)')
                 .text('-----------------------------------------')
+                .align('LT')
                 .text(detalles)
                 .text(pagoTarjeta)
                 .size(2, 2)
                 .text('TOTAL: ' + total + ' EUR \n')
                 .size(1, 1)
-                .text('IVA 10% : ' + (total / 1.1).toFixed(2) + ' EUR')
+                .align('CT')
+                .text('Base IVA         IVA         IMPORT')
+                .text(detalleIva)
                 .text('-- ES COPIA --')
-                .text('GRACIES PER LA SEVA VISITA')
-                .text('WiFi: 365Cafe')
-                .text('Psw: 365sabadell')
+                .text(pie)
                 .control('LF')
                 .control('LF')
                 .control('LF')
@@ -130,18 +151,6 @@ var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDe
 }
 
 var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClientes, recaudado, arrayMovimientos, nombreTienda, fI, fF) {
-    // console.log("---- INICIO TEST ----");
-    // console.log(calaixFet);
-    // console.log(nombreTrabajador);
-    // console.log(descuadre);
-    // console.log(nClientes);
-    // console.log(recaudado);
-    // console.log(arrayMovimientos);
-    // console.log(nombreTienda);
-    // console.log(fechaInicio);
-    // console.log(fechaFinal);
-    // console.log("---- FINAL TEST ----");
-    //fechaInicio = new Date();
     try {
         var fechaInicio     = new Date(fI);
         var fechaFinal      = new Date(fF);
@@ -215,7 +224,7 @@ function errorImpresora(err, event) {
 }
 
 exports.imprimirTicket = function (req, event) {
-    imprimirTicketVenta(event, req.numFactura, req.arrayCompra, req.total, req.visa);
+    imprimirTicketVenta(event, req.numFactura, req.arrayCompra, req.total, req.visa, req.tiposIva, req.cabecera, req.pie);
 }
 
 exports.imprimirTicketSalida = function (req, event) {

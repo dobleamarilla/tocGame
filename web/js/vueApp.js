@@ -8,7 +8,6 @@ function initVueTocGame() {
         },
         methods: {
             addItemPeso() {
-                console.log("VUE! idArticulo: ", cosaParaPeso.idArticulo, "nombreArticulo: ", cosaParaPeso.nombreArticulo, "precio: ", cosaParaPeso.precio, "sumable", cosaParaPeso.sumable, "gramos: ", this.gramos);
                 addItemCesta(cosaParaPeso.idArticulo, cosaParaPeso.nombreArticulo, cosaParaPeso.precio, cosaParaPeso.sumable, cosaParaPeso.idBoton, this.gramos);
                 this.gramos = 0;
                 $('#modalAPeso').modal('hide');
@@ -226,7 +225,8 @@ function initVueTocGame() {
 
             },
             borrar() {
-                if (this.activo === null) {
+                if (this.activo === null) 
+                {
                     db.cesta.clear().then(function () {
                         actualizarCesta();
                     }).catch(err => {
@@ -234,7 +234,8 @@ function initVueTocGame() {
                         notificacion('Error al borrar cesta', 'error');
                     });
                 }
-                else {
+                else 
+                {
                     db.cesta.where('idArticulo').equals(this.activo).delete().then(function () {
                         actualizarCesta();
                     }).catch(err => {
@@ -243,9 +244,6 @@ function initVueTocGame() {
                     });
                 }
             }
-
-        },
-        computed: {
 
         }
     });
