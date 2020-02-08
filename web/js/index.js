@@ -22,13 +22,13 @@ function startDB() {
         currentCaja: 'idCaja'
     });
 
-    const COEFICIENTE_IVA_4     = 0.04;
-    const COEFICIENTE_IVA_10    = 0.10;
-    const COEFICIENTE_IVA_21    = 0.21;
+    const COEFICIENTE_IVA_4 = 0.04;
+    const COEFICIENTE_IVA_10 = 0.10;
+    const COEFICIENTE_IVA_21 = 0.21;
 
-    const COEFICIENTE2_IVA_4     = 1.04;
-    const COEFICIENTE2_IVA_10    = 1.10;
-    const COEFICIENTE2_IVA_21    = 1.21;
+    const COEFICIENTE2_IVA_4 = 1.04;
+    const COEFICIENTE2_IVA_10 = 1.10;
+    const COEFICIENTE2_IVA_21 = 1.21;
 
     var aux = initVueTocGame();
 
@@ -38,6 +38,7 @@ function startDB() {
     vuePanelInferior = aux.panelInferior;
     vueSalidaDinero = aux.salidaDinero;
     vueEntradaDinero = aux.entradaDinero;
+    vueTicketMedio = aux.ticketMedio;
 
     comprobarConfiguracion().then((res) => {
         if (res) {
@@ -73,6 +74,7 @@ function loadingToc() {
         actualizarCesta();
         imprimirTeclado(0); //Faltan comprobaciones de existencia de teclados y cargar automáticamente el primero.
         clickMenu(0);
+        vueTicketMedio.actualizarTicketMedio();
     });
 }
 
@@ -252,13 +254,12 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
             //     notificacion('Error en setCerrarCaja modify cajas', 'error');
             // });
 
-            let recuentoSalidas     = await recuentoSalidasDinero(idCaja);
-            let recuentoEntradas    = await recuentoEntradasDinero(idCaja);
+            let recuentoSalidas = await recuentoSalidasDinero(idCaja);
+            let recuentoEntradas = await recuentoEntradasDinero(idCaja);
 
-            if (recuentoSalidas === null && recuentoEntradas === null) 
-            {
-                recuentoSalidas     = 0;
-                recuentoEntradas    = 0;
+            if (recuentoSalidas === null && recuentoEntradas === null) {
+                recuentoSalidas = 0;
+                recuentoEntradas = 0;
             }
 
             var _calaixFet = redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas);
@@ -475,8 +476,7 @@ function modalCerrarCaja() { //CREO QUE HAY QUE BORRAR
 }
 
 
-function ivaCorrecto(iva) 
-{
+function ivaCorrecto(iva) {
     let ivaOk = Number(iva);
     switch (ivaOk) {
         case 4:
@@ -494,8 +494,7 @@ function ivaCorrecto(iva)
     }
 }
 
-function conversorIva(iva) 
-{
+function conversorIva(iva) {
     let ivaOk = Number(iva);
     switch (ivaOk) {
         case 1:
@@ -554,19 +553,17 @@ function nuevoArticulo(idArticulo, nombreArticulo, precioArticulo, ivaArticulo) 
         console.log(`IVA incorrecto en id(${idArticulo}) nombre(${nombreArticulo})`);
     }
 }
-function construirObjetoIvas(idArticulo, unidades)
-{
-    var devolver = new Promise((dev, rej)=>{
-        db.articulos.get(idArticulo).then(data=>{
+function construirObjetoIvas(idArticulo, unidades) {
+    var devolver = new Promise((dev, rej) => {
+        db.articulos.get(idArticulo).then(data => {
             let base1 = 0, base2 = 0, base3 = 0;
             let valor1 = 0, valor2 = 0, valor3 = 0;
             let importe1 = 0, importe2 = 0, importe3 = 0;
 
-            switch(data.iva)
-            {
-                case 1: base1 = (data.precio/1.04)*unidades; valor1 = (data.precio/1.04)*0.04*unidades; importe1 = data.precio*unidades; break;
-                case 2: base2 = (data.precio/1.10)*unidades; valor2 = (data.precio/1.10)*0.10*unidades; importe2 = data.precio*unidades; break;
-                case 3: base3 = (data.precio/1.21)*unidades; valor3 = (data.precio/1.21)*0.21*unidades; importe3 = data.precio*unidades; break;
+            switch (data.iva) {
+                case 1: base1 = (data.precio / 1.04) * unidades; valor1 = (data.precio / 1.04) * 0.04 * unidades; importe1 = data.precio * unidades; break;
+                case 2: base2 = (data.precio / 1.10) * unidades; valor2 = (data.precio / 1.10) * 0.10 * unidades; importe2 = data.precio * unidades; break;
+                case 3: base3 = (data.precio / 1.21) * unidades; valor3 = (data.precio / 1.21) * 0.21 * unidades; importe3 = data.precio * unidades; break;
                 default: break;
             }
 
@@ -581,7 +578,7 @@ function construirObjetoIvas(idArticulo, unidades)
                 importe2: redondearPrecio(importe2),
                 importe3: redondearPrecio(importe3)
             });
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err);
             notificacion('Error al construirObjetoIva()', 'error');
             dev(null);
@@ -594,23 +591,19 @@ async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton
 {
     /* SAGRADO: SUMABLE ES NORMAL, NO SUMABLE ES A PESO */
     $('#' + idBoton).attr('disabled', true);
-    if (sumable || gramos !== false) 
-    {
-        var res = await db.cesta.get({idArticulo: idArticulo});
-        if (res) 
-        {
+    if (sumable || gramos !== false) {
+        var res = await db.cesta.get({ idArticulo: idArticulo });
+        if (res) {
             let uds = res.unidades + 1;
             let subt = res.subtotal + precio;
             if (!gramos) //PRODUCTO NORMAL
             {
-                let updated = await db.cesta.update(res.idLinea, { unidades: uds, subtotal: redondearPrecio(subt), activo: false, tipoIva: await construirObjetoIvas(idArticulo, uds)});
-                if (updated)
-                {
+                let updated = await db.cesta.update(res.idLinea, { unidades: uds, subtotal: redondearPrecio(subt), activo: false, tipoIva: await construirObjetoIvas(idArticulo, uds) });
+                if (updated) {
                     await buscarOfertas();
 
                 }
-                else 
-                {
+                else {
                     notificacion('La cesta no se ha actualizado', 'error');
                 }
             }
@@ -622,19 +615,16 @@ async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton
                 });
             }
         }
-        else 
-        {
-            if (!gramos) 
-            {
-                await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio, promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1)}).catch(err => {
+        else {
+            if (!gramos) {
+                await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio, promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1) }).catch(err => {
                     notificacion('Error 2431', 'error');
                     console.log(err);
                 });
                 await buscarOfertas();
             }
-            else 
-            {
-                await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1)}).catch(err => {
+            else {
+                await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1) }).catch(err => {
                     console.log(err);
                     notificacion('Error 4566', 'error');
                 });
@@ -697,13 +687,12 @@ function imprimirTicketReal(idTicket) {
     //idTicket, timestamp, total, cesta, tarjeta
     var enviarArray = [];
     db.tickets.where('idTicket').equals(idTicket).toArray(lista => {
-        for (let i = 0; i < lista[0].cesta.length; i++) 
-        {
+        for (let i = 0; i < lista[0].cesta.length; i++) {
             enviarArray.push({ cantidad: lista[0].cesta[i].unidades, articuloNombre: lista[0].cesta[i].nombreArticulo, importe: lista[0].cesta[i].subtotal });
         }
-        db.parametrosTicket.toArray().then(data=>{
-            imprimirEscpos({ numFactura: lista[0].idTicket, arrayCompra: enviarArray, total: lista[0].total, visa: lista[0].tarjeta, tiposIva: lista[0].tiposIva, cabecera: data[0].valorDato, pie: data[1].valorDato});
-        }).catch(err=>{
+        db.parametrosTicket.toArray().then(data => {
+            imprimirEscpos({ numFactura: lista[0].idTicket, arrayCompra: enviarArray, total: lista[0].total, visa: lista[0].tarjeta, tiposIva: lista[0].tiposIva, cabecera: data[0].valorDato, pie: data[1].valorDato });
+        }).catch(err => {
             console.log(err);
             notificacion('Error al obtener parametros de ticket', 'error');
         });
@@ -741,10 +730,11 @@ function pagarConTarjeta() {
                         {
                             db.activo.toArray().then(res => {
                                 if (res.length === 1) {
-                                    db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva:  calcularBasesTicket(lista) }).then(idTicket => {
+                                    db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista) }).then(idTicket => {
                                         vaciarCesta();
                                         notificacion('¡Ticket creado!', 'success');
                                         $('#modalPago').modal('hide');
+                                        vueTicketMedio.actualizarTicketMedio();
                                     });
                                 } else {
                                     console.log('Error #66');
@@ -769,14 +759,12 @@ function pagarConTarjeta() {
     });
 }
 
-function calcularBasesTicket(cesta)
-{
+function calcularBasesTicket(cesta) {
     let base1 = 0, base2 = 0, base3 = 0;
     let valor1 = 0, valor2 = 0, valor3 = 0;
     let importe1 = 0, importe2 = 0, importe3 = 0;
 
-    for(let i = 0; i < cesta.length; i++)
-    {
+    for (let i = 0; i < cesta.length; i++) {
         base1 += cesta[i].tipoIva.base1;
         base2 += cesta[i].tipoIva.base2;
         base3 += cesta[i].tipoIva.base3;
@@ -815,10 +803,11 @@ function pagarConEfectivo() {
                     if (lista.length > 0) {
                         db.activo.toArray().then(res => {
                             if (res.length === 1) {
-                                db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva:  calcularBasesTicket(lista)}).then(idTicket => {
+                                db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista) }).then(idTicket => {
                                     vaciarCesta();
                                     notificacion('¡Ticket creado!', 'success');
                                     $('#modalPago').modal('hide');
+                                    vueTicketMedio.actualizarTicketMedio();
                                 });
                             } else {
                                 console.log('Error #6');
@@ -879,6 +868,7 @@ var vuePeso = null;
 var vuePanelInferior = null;
 var vueSalidaDinero = null;
 var vueEntradaDinero = null;
+var vueTicketMedio = null;
 
 window.onload = startDB;
 var conexion = null;

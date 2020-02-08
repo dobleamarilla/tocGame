@@ -225,8 +225,7 @@ function initVueTocGame() {
 
             },
             borrar() {
-                if (this.activo === null) 
-                {
+                if (this.activo === null) {
                     db.cesta.clear().then(function () {
                         actualizarCesta();
                     }).catch(err => {
@@ -234,8 +233,7 @@ function initVueTocGame() {
                         notificacion('Error al borrar cesta', 'error');
                     });
                 }
-                else 
-                {
+                else {
                     db.cesta.where('idArticulo').equals(this.activo).delete().then(function () {
                         actualizarCesta();
                     }).catch(err => {
@@ -268,7 +266,7 @@ function initVueTocGame() {
                 $('#botonConfirmarSalida').attr('disabled', true); //El 'enable' con false se hace en la función de la caja.
                 nuevaSalidaDinero(Number(this.cantidad.replace(',', '.')), this.concepto);
             },
-            getConcepto(){
+            getConcepto() {
                 return this.concepto;
             }
         }
@@ -294,12 +292,39 @@ function initVueTocGame() {
             }
         }
     });
+    var ticketMedio = new Vue({
+        el: '#vueTicketMedio',
+        data: {
+            media: 0
+        },
+        methods: {
+            actualizarTicketMedio() {
+                db.tickets.toArray().then(data => {
+                    let suma = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        suma += data[i].total;
+                    }
+                    if (data.length > 0) {
+                        this.media = redondearPrecio(suma / data.length);
+                    }
+                    else {
+                        this.media = 0;
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                    notificacion('Error en actualizar ticketMedio', 'error');
+                });
+            }
+        }
+    });
     return {
         caja: vueSetCaja,
         fichajes: vueFichajes,
         peso: vueConPeso,
         panelInferior: vuePanelInferior,
         salidaDinero: salidaDinero,
-        entradaDinero: entradaDinero
+        entradaDinero: entradaDinero,
+        ticketMedio: ticketMedio
     };
 }
