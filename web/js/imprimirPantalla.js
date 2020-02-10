@@ -15,8 +15,7 @@ function imprimirListaCaja(lista) {
         else {
             aux = 'EN EFECTIVO';
         }
-        str += `<tr style="height:60px;font-size:20px;" onclick="verDetalleTicket(${lista[key].idTicket});"><th scope="row">${aux2}</th><td>${lista[key].idTicket}</td><td>${lista[key].timestamp}</td><td>${aux}</td><td>${lista[key].total} €</td></tr>`;
-
+        str += `<tr style="height:60px;font-size:20px;" onclick="verDetalleTicket(${lista[key].idTicket});"><th scope="row">${aux2}</th><td>${lista[key].idTicket}</td><td>${lista[key].timestamp.getDate()}/${lista[key].timestamp.getMonth()}/${lista[key].timestamp.getFullYear()} ${lista[key].timestamp.getHours()}:${lista[key].timestamp.getMinutes()}:${lista[key].timestamp.getSeconds()}</td><td>${aux}</td><td>${lista[key].total} €</td></tr>`;
         i++;
     }
     tablaCaja.innerHTML = str;

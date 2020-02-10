@@ -4,7 +4,7 @@ function startDB() {
     db = new Dexie('tocGame');
     db.version(1).stores({
         cesta: '++idLinea, idArticulo, nombreArticulo, unidades, subtotal, promocion, activo, tiposIva',
-        tickets: '++idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador, tiposIva',
+        tickets: '++idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador, tiposIva, enviado',
         parametrosTicket: 'nombreDato, valorDato',
         articulos: 'id, nombre, precio, iva, aPeso, familia, precioBase',
         teclado: 'id, arrayTeclado',
@@ -14,7 +14,7 @@ function startDB() {
         menus: 'id, nombre, color',
         submenus: 'id, idPadre, nombre, idTeclado, color',
         parametros: 'licencia, nombreEmpresa, database, nombreTienda',
-        cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta',
+        cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta, enviado',
         movimientos: '++id, timestamp, tipo, valor, idCaja, concepto',
         clientes: 'id, nombre, tarjetaCliente',
         familias: 'nombre, padre',
@@ -719,7 +719,7 @@ function fichadoYActivo() {
 function pagarConTarjeta() {
     //var idTicket = generarIdTicket();
     var time = new Date();
-    var stringTime = `${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+    //var stringTime = `${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
 
     fichadoYActivo().then(res22 => {
         if (res22) {
@@ -730,7 +730,7 @@ function pagarConTarjeta() {
                         {
                             db.activo.toArray().then(res => {
                                 if (res.length === 1) {
-                                    db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista) }).then(idTicket => {
+                                    db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista) }).then(idTicket => {
                                         vaciarCesta();
                                         notificacion('¡Ticket creado!', 'success');
                                         $('#modalPago').modal('hide');
@@ -794,7 +794,7 @@ function calcularBasesTicket(cesta) {
 function pagarConEfectivo() {
     //var idTicket = generarIdTicket();
     var time = new Date();
-    var stringTime = `${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+    //var stringTime = `${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
 
     fichadoYActivo().then(res22 => {
         if (res22) {
@@ -803,7 +803,7 @@ function pagarConEfectivo() {
                     if (lista.length > 0) {
                         db.activo.toArray().then(res => {
                             if (res.length === 1) {
-                                db.tickets.put({ timestamp: stringTime, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista) }).then(idTicket => {
+                                db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista) }).then(idTicket => {
                                     vaciarCesta();
                                     notificacion('¡Ticket creado!', 'success');
                                     $('#modalPago').modal('hide');

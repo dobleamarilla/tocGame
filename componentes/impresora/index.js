@@ -52,7 +52,7 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa,
                 .encode('latin1')
                 .size(1, 1)
                 .text(cabecera)
-                .text('Data: ' + fecha.getDate() + '-' + fecha.getMonth() + '-' + fecha.getFullYear() + ' ' + fecha.getHours() + ':' + fecha.getMinutes())
+                .text(`Data: ${fecha.getDate()}-${fecha.getMonth()+1}-${fecha.getFullYear()}  ${fecha.getHours()}:${fecha.getMinutes()}`)
                 .text('Factura simplificada N: ' + numFactura)
                 .control('LF')
                 .control('LF')
