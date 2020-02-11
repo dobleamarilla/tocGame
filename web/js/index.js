@@ -3,7 +3,7 @@
 function startDB() {
     db = new Dexie('tocGame');
     db.version(1).stores({
-        cesta: '++idLinea, idArticulo, nombreArticulo, unidades, subtotal, promocion, activo, tiposIva',
+        cesta: '++idLinea, idArticulo, nombreArticulo, unidades, subtotal, promocion, activo, infoArticulosPromo, tiposIva',
         tickets: '++idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador, tiposIva, enviado',
         parametrosTicket: 'nombreDato, valorDato',
         articulos: 'id, nombre, precio, iva, aPeso, familia, precioBase',
@@ -13,7 +13,7 @@ function startDB() {
         promociones: 'id, fechaInicio, fechaFinal, principal, cantidadPrincipal, secundario, cantidadSecundario, precioFinal',
         menus: 'id, nombre, color',
         submenus: 'id, idPadre, nombre, idTeclado, color',
-        parametros: 'licencia, nombreEmpresa, database, nombreTienda',
+        parametros: 'licencia, nombreEmpresa, database, nombreTienda, codigoTienda',
         cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta, enviado',
         movimientos: '++id, timestamp, tipo, valor, idCaja, concepto',
         clientes: 'id, nombre, tarjetaCliente',

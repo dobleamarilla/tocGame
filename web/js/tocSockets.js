@@ -4,7 +4,8 @@ socket.on('install-licencia', (data) => {
             licencia: data.licencia,
             nombreEmpresa: data.nombreEmpresa,
             database: data.database,
-            nombreTienda: data.nombreTienda
+            nombreTienda: data.nombreTienda,
+            codigoTienda: data.codigoTienda
         }).then(function () {
             console.log(data.licencia, data.nombreEmpresa, data.database);
         });

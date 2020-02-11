@@ -189,6 +189,14 @@ async function configurarCestaPromosBaseIvaSimple(cesta, infoPromo)
                 importe2: redondearPrecio(importe2*infoPromo.cantidadPrincipal),
                 importe3: redondearPrecio(importe3*infoPromo.cantidadPrincipal)
             }
+            cesta[i].infoArticulosPromo = {
+                idPrincipal: Number(infoPromo.principal),
+                idSecundario: null,
+                cantidadPrincipal: infoPromo.cantidadPrincipal*cesta[i].unidades,
+                cantidadSecundario: 0,
+                subtotalPrincipal: redondearPrecio(precioRealArticulo*cesta[i].unidades*infoPromo.cantidadPrincipal),
+                tipoPromo: 'individual'
+            };
             break;
         }
     }
@@ -246,6 +254,16 @@ async function configurarCestaPromosBaseIvaCombo(cesta, idArt1, idArt2, infoProm
                 importe2: redondearPrecio(importe2),
                 importe3: redondearPrecio(importe3)
             }
+            cesta[i].infoArticulosPromo = {
+                idPrincipal: idArt1,
+                idSecundario: idArt2,
+                cantidadPrincipal: infoPromo.cantidadPrincipal,
+                cantidadSecundario: infoPromo.cantidadSecundario,
+                subtotalPrincipal: redondearPrecio(precioRealArticulo1*cesta[i].unidades*infoPromo.cantidadPrincipal),
+                subtotalSecundario: redondearPrecio(precioRealArticulo2*cesta[i].unidades*infoPromo.cantidadSecundario),
+                tipoPromo: 'combo'
+            };
+            console.log("Hey eze, look at this ", cesta[i].infoArticulosPromo);
             break;
         }
     }
