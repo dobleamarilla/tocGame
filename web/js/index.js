@@ -735,7 +735,7 @@ function pagarConTarjeta() {
                         {
                             db.activo.toArray().then(res => {
                                 if (res.length === 1) {
-                                    db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista) }).then(idTicket => {
+                                    db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0}).then(idTicket => {
                                         vaciarCesta();
                                         notificacion('¡Ticket creado!', 'success');
                                         $('#modalPago').modal('hide');
@@ -808,7 +808,7 @@ function pagarConEfectivo() {
                     if (lista.length > 0) {
                         db.activo.toArray().then(res => {
                             if (res.length === 1) {
-                                db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista) }).then(idTicket => {
+                                db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0}).then(idTicket => {
                                     vaciarCesta();
                                     notificacion('¡Ticket creado!', 'success');
                                     $('#modalPago').modal('hide');
@@ -867,9 +867,14 @@ function addMenus() {
         console.log("Menús agregadosadd");
     });
 }
-function sincronizarToc()
+function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
 {
-    // console.log("Hey Eze");
+    db.tickets.where('enviado').equals(0).toArray().then(info=>{
+        console.log(info);
+    }).catch(err=>{
+        console.log(err);
+        notificacion('Error en sincronizarToc()', 'error');
+    });
     
 }
 

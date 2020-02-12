@@ -1,6 +1,12 @@
 const exec = require('child_process').exec;
 const os = require('os');
 
+function execute(command, callback) 
+{
+    exec(command, (error, stdout, stderr) => { 
+        callback(stdout); 
+    });
+};
 function atajosTeclado(globalShortcut, ventana) {
     /* REFRESH TOC */
     globalShortcut.register('F5', function () {
@@ -13,19 +19,15 @@ function atajosTeclado(globalShortcut, ventana) {
     /* ACTUALIZAR TOCGAME */
     globalShortcut.register('F2', function () {
         if (os.platform() === 'win32') { //
-            console.log("Hay que crear el instalador para windows");
+            execute('python3 /home/hit/upd/main.py', (output) => {
+                console.log(output);
+            });
         }
         else {
             if (os.platform() === 'linux') {
-                const myShellScript = exec('sh /home/hit/instalador.sh');
-                myShellScript.stdout.on('data', (data) => {
-                    console.log(data);
-                    // do whatever you want here with data
+                execute('python3 /home/hit/upd/main.py', (output) => {
+                    console.log(output);
                 });
-                myShellScript.stderr.on('data', (data) => {
-                    console.error(data);
-                });
-                //exec('sh /home/hit/instalador.sh');
             }
         }
     });
