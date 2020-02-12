@@ -589,61 +589,66 @@ function construirObjetoIvas(idArticulo, unidades) {
 
 async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton, gramos = false) //id, nombre, precio, iva, aPeso
 {
-    /* SAGRADO: SUMABLE ES NORMAL, NO SUMABLE ES A PESO */
-    $('#' + idBoton).attr('disabled', true);
-    if (sumable || gramos !== false) {
-        var res = await db.cesta.get({ idArticulo: idArticulo });
-        if (res) {
-            let uds = res.unidades + 1;
-            let subt = res.subtotal + precio;
-            if (!gramos) //PRODUCTO NORMAL
-            {
-                let updated = await db.cesta.update(res.idLinea, { unidades: uds, subtotal: redondearPrecio(subt), activo: false, tipoIva: await construirObjetoIvas(idArticulo, uds) });
-                if (updated) {
-                    await buscarOfertas();
+    try
+    {
+        /* SAGRADO: SUMABLE ES NORMAL, NO SUMABLE ES A PESO */
+        $('#' + idBoton).attr('disabled', true);
+        if (sumable || gramos !== false) {
+            var res = await db.cesta.get({ idArticulo: idArticulo });
+            if (res) {
+                let uds = res.unidades + 1;
+                let subt = res.subtotal + precio;
+                if (!gramos) //PRODUCTO NORMAL
+                {
+                    let updated = await db.cesta.update(res.idLinea, { unidades: uds, subtotal: redondearPrecio(subt), activo: false, tipoIva: await construirObjetoIvas(idArticulo, uds) });
+                    if (updated) {
+                        await buscarOfertas();
 
+                    }
+                    else {
+                        notificacion('La cesta no se ha actualizado', 'error');
+                    }
                 }
-                else {
-                    notificacion('La cesta no se ha actualizado', 'error');
+                else  //PRODUCTO A PESO
+                {
+                    await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1) }).catch(err => {
+                        console.log(err);
+                        notificacion('Error 456', 'error');
+                    });
                 }
-            }
-            else  //PRODUCTO A PESO
-            {
-                await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1) }).catch(err => {
-                    console.log(err);
-                    notificacion('Error 456', 'error');
-                });
-            }
-        }
-        else {
-            if (!gramos) {
-                await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio, promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1) }).catch(err => {
-                    notificacion('Error 2431', 'error');
-                    console.log(err);
-                });
-                await buscarOfertas();
             }
             else {
-                await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1) }).catch(err => {
-                    console.log(err);
-                    notificacion('Error 4566', 'error');
-                });
+                if (!gramos) {
+                    await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio, promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1) }).catch(err => {
+                        notificacion('Error 2431', 'error');
+                        console.log(err);
+                    });
+                    await buscarOfertas();
+                }
+                else {
+                    await db.cesta.put({ idArticulo: idArticulo, nombreArticulo: nombreArticulo, unidades: 1, subtotal: precio * (gramos / 1000), promocion: -1, activo: false, tipoIva: await construirObjetoIvas(idArticulo, 1) }).catch(err => {
+                        console.log(err);
+                        notificacion('Error 4566', 'error');
+                    });
+                }
             }
+            await actualizarCesta();
         }
-        await actualizarCesta();
+        else //Va por peso
+        {
+            cosaParaPeso = { idArticulo: idArticulo, nombreArticulo: nombreArticulo, precio: precio, sumable: sumable, idBoton: idBoton };
+            vuePeso.cosaParaPeso = cosaParaPeso;
+            console.log(vuePeso.cosaParaPeso);
+            $('#modalAPeso').modal('show');
+        }
+        $('#' + idBoton).attr('disabled', false);
     }
-    else //Va por peso
+    catch(err)
     {
-        cosaParaPeso = { idArticulo: idArticulo, nombreArticulo: nombreArticulo, precio: precio, sumable: sumable, idBoton: idBoton };
-        vuePeso.cosaParaPeso = cosaParaPeso;
-        console.log(vuePeso.cosaParaPeso);
-        $('#modalAPeso').modal('show');
+        console.log("Error cafes encontrado");
+        console.log(err);
+        notificacion('Error en e', 'error');
     }
-    $('#' + idBoton).attr('disabled', false);
-}
-
-function borrarItemCesta(idArticulo) {
-
 }
 
 function vaciarCesta() {
@@ -862,6 +867,12 @@ function addMenus() {
         console.log("Menús agregadosadd");
     });
 }
+function sincronizarToc()
+{
+    // console.log("Hey Eze");
+    
+}
+
 var vueSetCaja = null;
 var vueFichajes = null;
 var vuePeso = null;

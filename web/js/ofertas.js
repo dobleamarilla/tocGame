@@ -263,7 +263,6 @@ async function configurarCestaPromosBaseIvaCombo(cesta, idArt1, idArt2, infoProm
                 subtotalSecundario: redondearPrecio(precioRealArticulo2*cesta[i].unidades*infoPromo.cantidadSecundario),
                 tipoPromo: 'combo'
             };
-            console.log("Hey eze, look at this ", cesta[i].infoArticulosPromo);
             break;
         }
     }
