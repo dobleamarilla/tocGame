@@ -4,7 +4,7 @@ function startDB() {
     db = new Dexie('tocGame');
     db.version(1).stores({
         cesta: '++idLinea, idArticulo, nombreArticulo, unidades, subtotal, promocion, activo, infoArticulosPromo, tiposIva',
-        tickets: '++idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador, tiposIva, enviado',
+        tickets: '++idTicket, timestamp, total, cesta, tarjeta, idCaja, idTrabajador, tiposIva, [enviado+enTransito]',
         parametrosTicket: 'nombreDato, valorDato',
         articulos: 'id, nombre, precio, iva, aPeso, familia, precioBase',
         teclado: 'id, arrayTeclado',
@@ -735,7 +735,7 @@ function pagarConTarjeta() {
                         {
                             db.activo.toArray().then(res => {
                                 if (res.length === 1) {
-                                    db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0}).then(idTicket => {
+                                    db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0}).then(idTicket => {
                                         vaciarCesta();
                                         notificacion('¡Ticket creado!', 'success');
                                         $('#modalPago').modal('hide');
@@ -808,7 +808,7 @@ function pagarConEfectivo() {
                     if (lista.length > 0) {
                         db.activo.toArray().then(res => {
                             if (res.length === 1) {
-                                db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0}).then(idTicket => {
+                                db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0}).then(idTicket => {
                                     vaciarCesta();
                                     notificacion('¡Ticket creado!', 'success');
                                     $('#modalPago').modal('hide');
@@ -869,8 +869,20 @@ function addMenus() {
 }
 function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
 {
-    db.tickets.where('enviado').equals(0).toArray().then(info=>{
-        console.log(info);
+    let arrayTickets = [];
+    db.tickets.where({enviado:0, enTransito: 0}).modify((value) => {
+        value.enTransito = 1;
+        arrayTickets.push(value);
+    }).then(info=>{
+        if(info)
+        {
+            enviarTickets(arrayTickets);
+        }
+        else
+        {
+            console.log("nada para enviar");
+        }
+        //enviarTicket(value);
     }).catch(err=>{
         console.log(err);
         notificacion('Error en sincronizarToc()', 'error');

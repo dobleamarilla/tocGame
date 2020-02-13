@@ -1,16 +1,16 @@
-async function enviarTicket(idTicket)
+async function enviarTickets(arrayTicket)
 {
     var devolver = new Promise((dev, rej)=>{
-
-        db.tickets.get(idTicket).then(infoTicket=>{
-            if(infoTicket)
-            {
+        for(let i = 0; i < arrayTicket.length; i++)
+        {
                 db.parametros.toArray().then(infoParams=>{
+                    let infoTicket = arrayTicket[i];
                     let database = infoParams[0].database;
                     let nombreTabla = `[V_Venut_${infoTicket.timestamp.getFullYear()}-${limpiarMes(infoTicket.timestamp)}]`;
                     db.parametros.toArray().then(parametros=>{
                         if(!modoDesarrollador)
                         {
+                            console.log("TRAZA 3");
                             socket.emit('guardar-ticket', {
                                 codigoTienda: parametros[0].codigoTienda,
                                 idDependienta: infoTicket.idTrabajador,
@@ -38,18 +38,9 @@ async function enviarTicket(idTicket)
                     console.log(err);
                     notificacion('Error en get parametros en enviarTicket()', 'error');
                 });
-            }
-            else
-            {
-                console.log('No se encuentra el ticket: ' + infoTicket);
-                notificacion('No se encuentra el ticket: ' + infoTicket, 'error');
-                dev(false);
-            }
-        }).catch(err=>{
-            console.log(err);
-            notificacion('Error en get enviarTicket', 'error');
-            dev(false);
-        });
+            infoTicket = [];
+        }
+        dev(true);
     });
     return devolver;
 }
