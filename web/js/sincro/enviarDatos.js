@@ -5,33 +5,27 @@ async function enviarTickets(arrayTicket) {
                 let infoTicket = arrayTicket[i];
                 let database = infoParams[0].database;
                 let nombreTabla = `[V_Venut_${infoTicket.timestamp.getFullYear()}-${limpiarMes(infoTicket.timestamp)}]`;
-                db.parametros.toArray().then(parametros => {
-                    if (!modoDesarrollador) {
-                        console.log("TRAZA 3");
-                        let auxObjeto = {
-                            codigoTienda: parametros[0].codigoTienda,
-                            idDependienta: infoTicket.idTrabajador,
-                            idTicket: infoTicket.idTicket,
-                            tipoVenta: 'V',
-                            cesta: modificarCestaEnviarTicket(infoTicket),
-                            nombreTabla: nombreTabla,
-                            fecha: infoTicket.timestamp.toISOString(),
-                            database: database
-                        };
-                        console.log(auxObjeto);
-                        socket.emit('guardar-ticket', auxObjeto);
-                        dev(true);
-                    }
-                    else {
-                        notificacion('¡Modo desarrollador activado!', 'warning');
-                        dev(false);
-                    }
-
-                }).catch(err => {
-                    console.log(err);
-                    notificacion('Error en db.parametros de enviarTicket', 'error');
+                let licencia = infoParams[0].licencia;
+                let codigoTienda = infoParams[0].codigoTienda;
+                if (!modoDesarrollador) {
+                    let auxObjeto = {
+                        codigoTienda: codigoTienda,
+                        idDependienta: infoTicket.idTrabajador,
+                        idTicket: infoTicket.idTicket,
+                        tipoVenta: 'V',
+                        cesta: modificarCestaEnviarTicket(infoTicket),
+                        nombreTabla: nombreTabla,
+                        fecha: infoTicket.timestamp.toISOString(),
+                        database: database,
+                        licencia: licencia
+                    };
+                    socket.emit('guardar-ticket', auxObjeto);
+                    dev(true);
+                }
+                else {
+                    notificacion('¡Modo desarrollador activado!', 'warning');
                     dev(false);
-                });
+                }
             }).catch(err => {
                 console.log(err);
                 notificacion('Error en get parametros en enviarTicket()', 'error');
