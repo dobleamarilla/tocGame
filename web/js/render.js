@@ -33,6 +33,9 @@ function abrirTecladoVirtual() {
 function cerrarPrograma() {
     ipcRenderer.send('cerrarToc', true);
 }
+function refrescarPrograma() {
+    ipcRenderer.send('refreshToc', true);
+}
 function imprimirSalidaDinero(data) {
     ipcRenderer.send('imprimirSalidaDinero', data);
 }

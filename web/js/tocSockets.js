@@ -39,6 +39,14 @@ socket.on('cargar-todo', (data) => {
 
 //EN CARGAR TODO, TAMBIÉN SE TIENE QUE DIVIDIR EN LAS ACCIONES INDIVIDUALES PARA LAS HERRAMIENTAS DEL TOC. P.EJ. CARGAR PROMOCIONES(SOLO)
 
+socket.on('confirmarEnvioTicket', (data)=>{
+    db.tickets.where('idTicket').equals(data.idTicket).modify((res)=>{
+        res.enviado = 1;
+    }).catch(err=>{
+        console.log(err);
+        notificacion('Error en confirmarEnvioTicket sockets', 'error');
+    });
+});
 function iniciarTocSockets() {
     db.parametros.toArray().then(info => {
         if (info) {

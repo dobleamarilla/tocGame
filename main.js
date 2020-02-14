@@ -6,7 +6,7 @@ var net = require('net');
 var impresora = require('./componentes/impresora');
 var tecladoVirtual = require('./componentes/teclado');
 var atajos = require('./componentes/atajos');
-var cerrar = require('./componentes/acciones');
+var acciones = require('./componentes/acciones');
 var escpos = require('escpos');
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
@@ -82,6 +82,9 @@ app.on('ready', () => {
     });
 
     ipcMain.on('cerrarToc', (event, args) => {
-        cerrar.cerrar(ventanaPrincipal);
+        acciones.cerrar(ventanaPrincipal);
+    });
+    ipcMain.on('refreshToc', (event, args) => {
+        acciones.refresh(ventanaPrincipal);
     });
 });

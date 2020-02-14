@@ -1078,7 +1078,7 @@
         style="position:absolute;bottom:5px;left:10px;    font-family: Anton, sans-serif;    font-size: 30px;    font-style: normal;    color: black;    -webkit-text-stroke: 0.2px black">
         {{media}}€
     </div>
-    <div style="position:absolute;bottom:5px;right:10px;    font-family: Anton, sans-serif;    font-size: 30px;    font-style: normal;    color: black;    -webkit-text-stroke: 0.2px black">
+    <div id="versionFooter" style="position:absolute;bottom:5px;right:10px;    font-family: Anton, sans-serif;    font-size: 30px;    font-style: normal;    color: black;    -webkit-text-stroke: 0.2px black">
         <p id="versionToc"></p>
     </div>
     <div style="position:absolute;bottom:500px;right:10px;    font-family: Anton, sans-serif;    font-size: 30px;    font-style: normal;    color: black;    -webkit-text-stroke: 0.2px black">
@@ -1156,6 +1156,11 @@
             console.log(v);
             document.getElementById("versionToc").innerHTML = "v " + v;
         })    
+    </script>
+    <script>
+        versionFooter.addEventListener('dblclick', (e)=>{
+            refrescarPrograma();
+        })
     </script>
     <script>
         setInterval(sincronizarToc, 1500);
