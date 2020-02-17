@@ -1114,26 +1114,12 @@
 
 
     <script>
-        var modoDesarrollador = true;
+        var modoDesarrollador = false; /* 1- Bloquea ventas, no salen del TOC  2- ...*/
 
         var $th = $('.header-fixed-caja').find('thead th')
         $('.header-fixed-caja').on('scroll', function () {
             $th.css('transform', 'translateY(' + this.scrollTop + 'px)');
         });
-        document.oncontextmenu = function () {
-            if (modoDesarrollador) {
-                return true;
-            } else {
-                return false
-            }
-        };
-        document.onmousedown = function () {
-            if (modoDesarrollador) {
-                return true;
-            } else {
-                return false
-            }
-        };
 
         const socket = io('http://52.213.244.62:8080');
         socket.on('escucho', (data) => {

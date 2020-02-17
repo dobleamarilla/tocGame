@@ -878,11 +878,6 @@ function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
         {
             enviarTickets(arrayTickets);
         }
-        else
-        {
-            console.log("nada para enviar");
-        }
-        //enviarTicket(value);
     }).catch(err=>{
         console.log(err);
         notificacion('Error en sincronizarToc()', 'error');

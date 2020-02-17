@@ -1,5 +1,6 @@
 socket.on('install-licencia', (data) => {
-    if (!data.error) {
+    if (!data.error) 
+    {
         db.parametros.put({
             licencia: data.licencia,
             nombreEmpresa: data.nombreEmpresa,
@@ -8,13 +9,16 @@ socket.on('install-licencia', (data) => {
             codigoTienda: data.codigoTienda
         }).then(function () {
             console.log(data.licencia, data.nombreEmpresa, data.database);
+            db.tickets.put({idTicket: data.ultimoTicket, enTransito: 0, enviado: 1}).then(lol=>{
+                db.tickets.where('idTicket').equals(data.ultimoTicket).delete()});
         });
         document.onmousedown = function () { return true };
         $("#installWizard").modal('hide');
         notificacion('Licencia OK!', 'success');
         iniciarTocSockets();
     }
-    else {
+    else 
+    {
         console.log("Hay error: " + data.infoError);
     }
 });

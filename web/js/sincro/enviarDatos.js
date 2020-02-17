@@ -20,6 +20,7 @@ async function enviarTickets(arrayTicket) {
                         licencia: licencia
                     };
                     socket.emit('guardar-ticket', auxObjeto);
+                    console.log(auxObjeto);
                     dev(true);
                 }
                 else {
