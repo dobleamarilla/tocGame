@@ -19,13 +19,13 @@ function atajosTeclado(globalShortcut, ventana) {
     /* ACTUALIZAR TOCGAME */
     globalShortcut.register('F2', function () {
         if (os.platform() === 'win32') { //
-            execute('python3 /home/hit/upd/main.py', (output) => {
+            execute('', (output) => {
                 console.log(output);
             });
         }
         else {
             if (os.platform() === 'linux') {
-                execute('python3 /home/hit/upd/main.py', (output) => {
+                execute('sh /home/hit/updateToc.sh', (output) => {
                     console.log(output);
                 });
             }
