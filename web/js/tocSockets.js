@@ -10,7 +10,10 @@ socket.on('install-licencia', (data) => {
         }).then(function () {
             console.log(data.licencia, data.nombreEmpresa, data.database);
             db.tickets.put({idTicket: data.ultimoTicket, enTransito: 0, enviado: 1}).then(lol=>{
-                db.tickets.where('idTicket').equals(data.ultimoTicket).delete()});
+                db.tickets.where('idTicket').equals(data.ultimoTicket).delete()}).catch(err=>{
+                    console.log(err);
+                    notificacion('Error en insertar último ticket correlativo', 'error');
+                });
         });
         document.onmousedown = function () { return true };
         $("#installWizard").modal('hide');
