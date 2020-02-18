@@ -1,10 +1,9 @@
 const exec = require('child_process').exec;
 const os = require('os');
 
-function execute(command, callback) 
-{
-    exec(command, (error, stdout, stderr) => { 
-        callback(stdout); 
+function execute(command, callback) {
+    exec(command, (error, stdout, stderr) => {
+        callback(stdout);
     });
 };
 function atajosTeclado(globalShortcut, ventana) {
@@ -25,7 +24,7 @@ function atajosTeclado(globalShortcut, ventana) {
         }
         else {
             if (os.platform() === 'linux') {
-                execute('sh /home/hit/updateToc.sh', (output) => {
+                execute('sh /home/hit/tocGameUpdater.sh', (output) => {
                     console.log(output);
                 });
             }
