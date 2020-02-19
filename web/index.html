@@ -1131,17 +1131,15 @@
     <script src="js/tocSockets.js"></script>
     <script>
         const fs = require('fs');
-        fs.readFile('./package.json', 'utf8', (err, jsonString) => {
-            if (err) {
-                console.log("Error leyendo la version:", err);
-                return;
-            }
-            const config = JSON.parse(jsonString);
-            console.log(config);
-            var v = config.version;
-            console.log(v);
-            document.getElementById("versionToc").innerHTML = "v " + v;
-        })    
+        fs.readFile('resources/app/version.json', 'utf8', (err, jsonString) => {
+        if (err) {
+            console.log("Error leyendo la version:", err);
+            return;
+        }
+        const config = JSON.parse(jsonString);
+        var v = config.version;
+        document.getElementById("versionToc").innerHTML = "v " + v;
+    });
     </script>
     <script>
         versionFooter.addEventListener('dblclick', (e)=>{
@@ -1152,5 +1150,4 @@
         setInterval(sincronizarToc, 1500);
     </script>
 </body>
-
 </html>

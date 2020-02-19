@@ -14,7 +14,7 @@ function startDB() {
         menus: 'id, nombre, color',
         submenus: 'id, idPadre, nombre, idTeclado, color',
         parametros: 'licencia, nombreEmpresa, database, nombreTienda, codigoTienda',
-        cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta, enviado',
+        cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta, detalleApertura, detalleCierre, enviado',
         movimientos: '++id, timestamp, tipo, valor, idCaja, concepto',
         clientes: 'id, nombre, tarjetaCliente',
         familias: 'nombre, padre',
@@ -192,7 +192,8 @@ function setAbrirCaja() {
         totalCierre: null,
         descuadre: null,
         recaudado: null,
-        abierta: 1 //1 ABIERTA, 0 CERRADA
+        abierta: 1, //1 ABIERTA, 0 CERRADA
+        detalleApertura: vueSetCaja.getDetalle
     }).then(function () {
         db.cajas.orderBy('id').last().then(data => {
             setCurrentCaja(data.id).then(res => {
@@ -299,7 +300,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 caja.descuadre = infoTicketCierre.descuadre;
                 caja.recaudado = infoTicketCierre.recaudado;
                 caja.totalCierre = infoTicketCierre.cFinalCaja;
-
+                caja.detalleCierre = vueSetCaja.getDetalle;
             }).catch(err => {
                 console.log(err);
                 notificacion('Error en setCerrarCaja modify cajas', 'error');

@@ -193,6 +193,26 @@ function initVueTocGame() {
                 total += this.infoDinero[14].valor * 500;
 
                 return total;
+            },
+            getDetalle(){
+                var info = [
+                    {valor: this.infoDinero[0].valor * 0.01, unidades: this.infoDinero[0].valor},
+                    {valor: this.infoDinero[1].valor * 0.02, unidades: this.infoDinero[1].valor},
+                    {valor: this.infoDinero[2].valor * 0.05, unidades: this.infoDinero[2].valor},
+                    {valor: this.infoDinero[3].valor * 0.10, unidades: this.infoDinero[3].valor},
+                    {valor: this.infoDinero[4].valor * 0.20, unidades: this.infoDinero[4].valor},
+                    {valor: this.infoDinero[5].valor * 0.50, unidades: this.infoDinero[5].valor},
+                    {valor: this.infoDinero[6].valor * 1, unidades: this.infoDinero[6].valor},
+                    {valor: this.infoDinero[7].valor * 2, unidades: this.infoDinero[7].valor},
+                    {valor: this.infoDinero[8].valor * 5, unidades: this.infoDinero[8].valor},
+                    {valor: this.infoDinero[9].valor * 10, unidades: this.infoDinero[9].valor},
+                    {valor: this.infoDinero[10].valor * 20, unidades: this.infoDinero[10].valor},
+                    {valor: this.infoDinero[11].valor * 50, unidades: this.infoDinero[11].valor},
+                    {valor: this.infoDinero[12].valor * 100, unidades: this.infoDinero[12].valor},
+                    {valor: this.infoDinero[13].valor * 200, unidades: this.infoDinero[13].valor},
+                    {valor: this.infoDinero[14].valor * 500, unidades: this.infoDinero[14].valor},
+                ];
+                return info;
             }
         }
     });
