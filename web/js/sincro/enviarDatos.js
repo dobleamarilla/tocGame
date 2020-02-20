@@ -15,7 +15,7 @@ async function enviarTickets(arrayTicket) {
                         tipoVenta: 'V',
                         cesta: modificarCestaEnviarTicket(infoTicket),
                         nombreTabla: nombreTabla,
-                        fecha: infoTicket.timestamp.toISOString(),
+                        fecha: formatearFecha(infoTicket.timestamp),
                         database: database,
                         licencia: licencia
                     };
@@ -37,9 +37,50 @@ async function enviarTickets(arrayTicket) {
     });
     return devolver;
 }
+
+async function enviarCajas()
+{
+    
+}
+
 function limpiarMes(date) {
     var month = date.getMonth() + 1;
     return month < 10 ? '0' + month : '' + month;
+}
+
+function formatearFecha(fecha)
+{
+    //yyyy-mm-dd hh:mi:ss (120 MSSQL)
+    var devolverString = '';
+    var month = `${fecha.getMonth()+1}`;
+    var day = `${fecha.getDate()}`;
+    var hours = `${fecha.getHours()}`;
+    var minutes = `${fecha.getMinutes()}`;
+    var seconds = `${fecha.getSeconds()}`;
+
+    if(month.length === 1)
+    {
+        month = '0'+month;
+    }
+    if(day.length === 1)
+    {
+        day = '0'+day;
+    }
+    if(hours.length === 1)
+    {
+        hours = '0'+hours;
+    }
+    if(minutes.length === 1)
+    {
+        minutes = '0'+minutes;
+    }
+    if(seconds.length === 1)
+    {
+        seconds = '0'+seconds;
+    }
+
+    devolverString = `${fecha.getFullYear()}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return devolverString;
 }
 
 function modificarCestaEnviarTicket(infoTicket) /* Esta función limpia las promociones y deja en la cesta los precios reales de los productos */ {

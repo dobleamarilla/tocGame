@@ -14,7 +14,7 @@ function startDB() {
         menus: 'id, nombre, color',
         submenus: 'id, idPadre, nombre, idTeclado, color',
         parametros: 'licencia, nombreEmpresa, database, nombreTienda, codigoTienda',
-        cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta, detalleApertura, detalleCierre, enviado',
+        cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta, detalleApertura, detalleCierre, [enviado+enTransito]',
         movimientos: '++id, timestamp, tipo, valor, idCaja, concepto',
         clientes: 'id, nombre, tarjetaCliente',
         familias: 'nombre, padre',
@@ -878,6 +878,19 @@ function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
         if(info)
         {
             enviarTickets(arrayTickets);
+            let arrayCajas = [];
+            db.cajas.where({enviado: 0, enTransito: 0, abierta: 0}).modify(value=>{
+                value.enTransito = 1;
+                arrayCajas.push(value);
+            }).then(info2=>{
+                if(info2)
+                {
+                    enviarCajas(array);
+                }
+            }).catch(err=>{
+                console.log(err);
+                notificacion('Error en Dexie cajas, sincronizarToc()', 'error');
+            });
         }
     }).catch(err=>{
         console.log(err);
