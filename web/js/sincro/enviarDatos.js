@@ -38,9 +38,15 @@ async function enviarTickets(arrayTicket) {
     return devolver;
 }
 
-async function enviarCajas()
+async function enviarCajas(arrayCajas)
 {
-    
+    // var devolver = new Promise((dev, rej)=>{
+    //     for(let i = 0; i < arrayCajas.length; i++)
+    //     {
+
+    //     }
+    // });
+    return 0;//devolver;
 }
 
 function limpiarMes(date) {
