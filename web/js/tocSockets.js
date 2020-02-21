@@ -54,6 +54,14 @@ socket.on('confirmarEnvioTicket', (data)=>{
         notificacion('Error en confirmarEnvioTicket sockets', 'error');
     });
 });
+socket.on('confirmarEnvioCaja', (data)=>{
+    db.cajas.where('id').equals(data.idCaja).modify((res)=>{
+        res.enviado = 1;
+    }).catch(err=>{
+        console.log(err);
+        notificacion('Error en confirmarEnvioCaja sockets', 'error');
+    });
+});
 function iniciarTocSockets() {
     db.parametros.toArray().then(info => {
         if (info) {

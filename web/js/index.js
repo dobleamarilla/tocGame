@@ -14,7 +14,7 @@ function startDB() {
         menus: 'id, nombre, color',
         submenus: 'id, idPadre, nombre, idTeclado, color',
         parametros: 'licencia, nombreEmpresa, database, nombreTienda, codigoTienda',
-        cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, recaudado, abierta, detalleApertura, detalleCierre, [enviado+enTransito]',
+        cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, abierta, recaudado, nClientes, detalleApertura, detalleCierre, [enviado+enTransito]',
         movimientos: '++id, timestamp, tipo, valor, idCaja, concepto',
         clientes: 'id, nombre, tarjetaCliente',
         familias: 'nombre, padre',
@@ -182,43 +182,49 @@ function setCaja() { //Tipo 1 = Abrir, Tipo 2 = Cerrar
     }
 }
 
-function setAbrirCaja() {
-    db.cajas.put({
-        inicioTime: new Date(),
-        finalTime: null,
-        inicioDependenta: null,
-        finalDependenta: null,
-        totalApertura: vueSetCaja.getTotal,
-        totalCierre: null,
-        descuadre: null,
-        recaudado: null,
-        abierta: 1, //1 ABIERTA, 0 CERRADA
-        detalleApertura: vueSetCaja.getDetalle
-    }).then(function () {
-        db.cajas.orderBy('id').last().then(data => {
-            setCurrentCaja(data.id).then(res => {
-                if (res) {
-                    loadingToc();
-                    notificacion('¡INICIO CAJA OK!');
-                    $('#modalSetCaja').modal('hide');
-                }
-                else {
-                    try {
-                        throw "Error en setCurrentCaja";
-                    } catch (err) {
-                        console.log(err)
-                        notificacion(err, 'error');
+function setAbrirCaja() 
+{
+    getTrabajadorActivo().then(trabajador=>{
+        db.cajas.put({
+            inicioTime: new Date(),
+            finalTime: null,
+            inicioDependenta: trabajador.idTrabajador,
+            finalDependenta: null,
+            totalApertura: vueSetCaja.getTotal,
+            totalCierre: null,
+            descuadre: null,
+            recaudado: null,
+            abierta: 1, //1 ABIERTA, 0 CERRADA
+            detalleApertura: vueSetCaja.getDetalle,
+            enviado: 0,
+            enTransito: 0
+        }).then(function () {
+            db.cajas.orderBy('id').last().then(data => {
+                setCurrentCaja(data.id).then(res => {
+                    if (res) {
+                        loadingToc();
+                        notificacion('¡INICIO CAJA OK!');
+                        $('#modalSetCaja').modal('hide');
                     }
-                }
+                    else {
+                        try {
+                            throw "Error en setCurrentCaja";
+                        } catch (err) {
+                            console.log(err)
+                            notificacion(err, 'error');
+                        }
+                    }
+                });
+            }).catch(err => {
+                console.log(err);
+                notificacion('Error. No se puede establecer el ID de la caja actual');
             });
         }).catch(err => {
             console.log(err);
-            notificacion('Error. No se puede establecer el ID de la caja actual');
+            notificacion('Error 154', 'error');
         });
-    }).catch(err => {
-        console.log(err);
-        notificacion('Error 154', 'error');
-    });
+    })
+
 }
 
 function confirmarCierre() {
@@ -301,6 +307,7 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 caja.recaudado = infoTicketCierre.recaudado;
                 caja.totalCierre = infoTicketCierre.cFinalCaja;
                 caja.detalleCierre = vueSetCaja.getDetalle;
+                caja.nClientes = infoTicketCierre.nClientes;
             }).catch(err => {
                 console.log(err);
                 notificacion('Error en setCerrarCaja modify cajas', 'error');
@@ -878,20 +885,23 @@ function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
         if(info)
         {
             enviarTickets(arrayTickets);
-            let arrayCajas = [];
-            db.cajas.where({enviado: 0, enTransito: 0, abierta: 0}).modify(value=>{
+        }
+        let arrayCajas = [];
+        db.cajas.where({enviado: 0, enTransito: 0}).modify(value=>{
+            if(value.abierta === 0)
+            {
                 value.enTransito = 1;
                 arrayCajas.push(value);
-            }).then(info2=>{
-                if(info2)
-                {
-                    enviarCajas(array);
-                }
-            }).catch(err=>{
-                console.log(err);
-                notificacion('Error en Dexie cajas, sincronizarToc()', 'error');
-            });
-        }
+            }
+        }).then(info2=>{
+            if(info2)
+            {
+                enviarCajas(arrayCajas);
+            }
+        }).catch(err=>{
+            console.log(err);
+            notificacion('Error en Dexie cajas, sincronizarToc()', 'error');
+        });
     }).catch(err=>{
         console.log(err);
         notificacion('Error en sincronizarToc()', 'error');

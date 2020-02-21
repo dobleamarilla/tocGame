@@ -40,13 +40,24 @@ async function enviarTickets(arrayTicket) {
 
 async function enviarCajas(arrayCajas)
 {
-    // var devolver = new Promise((dev, rej)=>{
-    //     for(let i = 0; i < arrayCajas.length; i++)
-    //     {
-
-    //     }
-    // });
-    return 0;//devolver;
+    console.log(arrayCajas);
+    var devolver = new Promise((dev, rej)=>{
+        db.parametros.toArray().then(infoParams=>{
+            let auxObjeto = {
+                codigoTienda: infoParams[0].codigoTienda,
+                database: infoParams[0].database,
+                arrayCajas: arrayCajas
+            };
+            console.log("EL OBJETO QUE SE ENVÍA ES: ", auxObjeto);
+            socket.emit('guardar-caja', auxObjeto);
+            dev(true);
+        }).catch(err=>{
+            console.log(err);
+            notificacion('Error en enviarCajas 1', 'error');
+            dev(false);
+        });
+    });
+    return devolver;
 }
 
 function limpiarMes(date) {
