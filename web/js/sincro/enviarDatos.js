@@ -40,7 +40,6 @@ async function enviarTickets(arrayTicket) {
 
 async function enviarCajas(arrayCajas)
 {
-    console.log(arrayCajas);
     var devolver = new Promise((dev, rej)=>{
         db.parametros.toArray().then(infoParams=>{
             let auxObjeto = {
@@ -48,9 +47,15 @@ async function enviarCajas(arrayCajas)
                 database: infoParams[0].database,
                 arrayCajas: arrayCajas
             };
-            console.log("EL OBJETO QUE SE ENVÍA ES: ", auxObjeto);
-            socket.emit('guardar-caja', auxObjeto);
-            dev(true);
+            if(arrayCajas.length > 0)
+            {
+                socket.emit('guardar-caja', auxObjeto);
+                dev(true);
+            }
+            else
+            {
+                dev(false);
+            }
         }).catch(err=>{
             console.log(err);
             notificacion('Error en enviarCajas 1', 'error');

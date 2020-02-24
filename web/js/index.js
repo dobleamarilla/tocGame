@@ -39,6 +39,7 @@ function startDB() {
     vueSalidaDinero = aux.salidaDinero;
     vueEntradaDinero = aux.entradaDinero;
     vueTicketMedio = aux.ticketMedio;
+    vueSelectDependienta = aux.selectDependienta;
 
     comprobarConfiguracion().then((res) => {
         if (res) {
@@ -843,6 +844,7 @@ function pagarConEfectivo() {
 }
 
 function abrirPago() {
+    vueSelectDependienta.actualizarSelectTrabajadores();
     db.cesta.toArray(lista => {
         if (lista) {
             if (lista.length > 0) {
@@ -916,6 +918,7 @@ var vuePanelInferior = null;
 var vueSalidaDinero = null;
 var vueEntradaDinero = null;
 var vueTicketMedio = null;
+var vueSelectDependienta = null;
 
 window.onload = startDB;
 var conexion = null;

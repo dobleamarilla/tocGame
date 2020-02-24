@@ -107,15 +107,22 @@ function initVueTocGame() {
                     }
                 });
             },
-            verFichados: function () {
-                getFichados().then(res => {
-                    if (res.todoOK) {
-                        if (res.data.length > 0) {
+            verFichados: function () 
+            {
+                getFichados().then(res => 
+                    {
+                    if (res.todoOK) 
+                    {
+                        if (res.data.length > 0) 
+                        {
                             this.fichados = res.data;
-                        } else {
+                        } else 
+                        {
                             this.fichados = [];
                         }
-                    } else {
+                    } 
+                    else 
+                    {
                         console.log("Error en getFichados/verFichados");
                     }
                 });
@@ -128,6 +135,35 @@ function initVueTocGame() {
         }
     });
     /* FINAL FICHAJES */
+    /* INICIO SELECT DEPENDIENTA */
+    var vueSelectDependienta = new Vue({
+        el: '#vueListaTrabajadoresFichados',
+        data: {
+            listaFichados: []
+        },
+        methods: {
+            actualizarSelectTrabajadores: function()
+            {
+                getFichados().then(res=>{
+                    if(res.todoOK)
+                    {
+                        this.listaFichados = res.data;
+                    }
+                    else
+                    {
+                        this.llistaFichados = [];
+                        console.log("Error en getFichados/actualizarSelectTrabajadores");
+                        notificacion('Error en getFichados/actualizarSelectTrabajadores', 'error');
+                    }
+                });
+            },
+            test: function(lol)
+            {
+                alert(lol);
+            }
+        }
+    });
+    /* FIN SELECT DEPENDIENTA */
     /* CAJA */
     var vueSetCaja = new Vue({
         el: '#vueSetCaja',
@@ -345,6 +381,7 @@ function initVueTocGame() {
         panelInferior: vuePanelInferior,
         salidaDinero: salidaDinero,
         entradaDinero: entradaDinero,
-        ticketMedio: ticketMedio
+        ticketMedio: ticketMedio,
+        selectDependienta: vueSelectDependienta
     };
 }

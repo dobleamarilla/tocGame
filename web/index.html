@@ -416,6 +416,13 @@
                                 alt="Imagen de tarjetas" onclick="pagarConEfectivo();">
                         </div>
                     </div>
+                    <div id="vueListaTrabajadoresFichados" class="row">
+                        <div class="col-md-12">
+                            <span v-for="trabajador of listaFichados">
+                                <button type="button" class="btn btn-primary" @click="test(trabajador.idTrabajador)">{{trabajador.nombre}}</button>
+                            </span>
+                        </div>
+                    </div>
                     <div class="row hide" id="rowImprimirTicket" style="text-align: center;">
                         <div class="col-md-12">
                             <img id="imagenImprimir" src="imagenes/imprimir.png" width="250px" alt="Imagen de tarjetas"
@@ -640,7 +647,7 @@
                                             <th>-</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="buscar">
+                                    <tbody class="buscar" style="height: 700px;">
                                         <tr v-for="persona of trabajadores">
                                             <td>{{persona.nombre}}</td>
                                             <td>{{persona.nombreCorto}}</td>
@@ -661,7 +668,7 @@
                                             <th>-</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody style="height: 700px;">
                                         <tr v-for="persona of fichados">
                                             <td>{{persona.nombre}}</td>
                                             <td>{{persona.inicio.getHours()}}:{{persona.inicio.getMinutes()}}:{{persona.inicio.getSeconds()}}
