@@ -15,7 +15,7 @@ function startDB() {
         submenus: 'id, idPadre, nombre, idTeclado, color',
         parametros: 'licencia, nombreEmpresa, database, nombreTienda, codigoTienda',
         cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, abierta, recaudado, nClientes, detalleApertura, detalleCierre, [enviado+enTransito]',
-        movimientos: '++id, timestamp, tipo, valor, idCaja, concepto',
+        movimientos: '++id, timestamp, tipo, valor, idCaja, concepto, idTrabajador, [enviado+enTransito]',
         clientes: 'id, nombre, tarjetaCliente',
         familias: 'nombre, padre',
         activo: 'idTrabajador',
@@ -270,19 +270,22 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 recuentoEntradas = 0;
             }
 
-            var _calaixFet = redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas);
+            var _calaixFet = redondearPrecio(infoCierre.totalEfectivo + infoCierre.totalTarjeta); //(totalEfectivoDependientas + - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas);
             var _nombreTrabajador = (await getTrabajadorActivo()).nombre;
-            var _descuadre = redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas - infoCierre.totalEfectivo);
+            var _descuadre = redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas + infoCierre.totalTarjeta - (infoCierre.totalEfectivo + infoCierre.totalTarjeta))//(totalEfectivoDependientas - datosCaja.totalApertura + infoCierreTotalTarjeta + recuentoSalidas - recuentoEntradas - infoCierre.totalEfectivo - infoCierreTotalTarjeta);
             var _nClientes = infoCierre.numeroClientes;
-            var _recaudado = redondearPrecio(infoCierre.totalEfectivo + infoCierre.totalTarjeta + _descuadre);
+            var _recaudado = redondearPrecio(totalEfectivoDependientas - datosCaja.totalApertura + recuentoSalidas - recuentoEntradas + infoCierre.totalTarjeta); //(infoCierre.totalEfectivo + infoCierre.totalTarjeta + _descuadre);
             var _arrayMovimientos = await db.movimientos.where('idCaja').equals(idCaja).toArray();
             var _nombreTienda = (await getParametros()).nombreTienda;
             var _fechaInicio = datosCaja.inicioTime;
+            var _totalTarjeta = redondearPrecio(infoCierre.totalTarjeta);
+            var _cambioInicial = redondearPrecio(datosCaja.totalApertura);
+            var _cambioFinal = redondearPrecio(totalEfectivoDependientas);
 
             var _totalSalidas = -recuentoSalidas;
             var _totalEntradas = recuentoEntradas;
             var _cInicioCaja = datosCaja.totalApertura;
-            var _cFinalCaja = redondearPrecio(datosCaja.totalApertura + recuentoEntradas + infoCierre.totalEfectivo - recuentoSalidas + _descuadre);
+            var _cFinalCaja = totalEfectivoDependientas;
 
             var infoTicketCierre = {
                 calaixFet: _calaixFet,
@@ -296,8 +299,9 @@ async function setCerrarCaja() { //Al cerrar, establecer currentCaja = null y vu
                 fechaFinal: fechaFin,
                 totalSalidas: _totalSalidas,
                 totalEntradas: _totalEntradas,
-                cInicioCaja: _cInicioCaja,
-                cFinalCaja: _cFinalCaja
+                cInicioCaja: _cambioInicial,
+                cFinalCaja: _cambioFinal,
+
 
             };
             await db.cajas.where('id').equals(idCaja).modify(function (caja) {
@@ -900,6 +904,19 @@ function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
             {
                 enviarCajas(arrayCajas);
             }
+            let arrayMovimientos = [];
+            db.movimientos.where({enviado: 0, enTransito: 0}).modify(value=>{
+                value.enTransito = 1;
+                arrayMovimientos.push(value);
+            }).then(info3=>{
+                if(info3)
+                {
+                    enviarMovimientos(arrayMovimientos);
+                }
+            }).catch(err=>{
+                console.log(err);
+                notificacion('Error en Dexie Movimientos', 'error');
+            })
         }).catch(err=>{
             console.log(err);
             notificacion('Error en Dexie cajas, sincronizarToc()', 'error');

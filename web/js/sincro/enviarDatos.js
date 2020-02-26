@@ -65,6 +65,33 @@ async function enviarCajas(arrayCajas)
     return devolver;
 }
 
+async function enviarMovimientos(arrayMovimientos)
+{
+    var devolver = new Promise((dev, rej)=>{
+        db.parametros.toArray().then(infoParams=>{
+            let auxObjeto = {
+                codigoTienda: infoParams[0].codigoTienda,
+                database: infoParams[0].database,
+                arrayMovimientos: arrayMovimientos
+            };
+            if(arrayMovimientos.length > 0)
+            {
+                socket.emit('guardar-movimientos', auxObjeto);
+                dev(true);
+            }
+            else
+            {
+                dev(false);
+            }
+        }).catch(err=>{
+            console.log(err);
+            notificacion('Error en enviarMovimientos 1', 'error');
+            dev(false);
+        });
+    });
+    return devolver;
+}
+
 function limpiarMes(date) {
     var month = date.getMonth() + 1;
     return month < 10 ? '0' + month : '' + month;

@@ -150,7 +150,7 @@ var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDe
     }
 }
 
-var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClientes, recaudado, arrayMovimientos, nombreTienda, fI, fF) {
+var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClientes, recaudado, arrayMovimientos, nombreTienda, fI, fF, cInicioCaja, cFinalCaja) {
     try {
         var fechaInicio     = new Date(fI);
         var fechaFinal      = new Date(fF);
@@ -192,6 +192,8 @@ var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClien
                 .text('Descuadre       :      ' + descuadre)
                 .text('Clients atesos  :      ' + nClientes)
                 .text('Recaudat        :      ' + recaudado)
+                .text('Canvi inicial        :      ' + cInicioCaja)
+                .text('Canvi final        :      ' + cFinalCaja)
                 .text('')
                 .size(1, 1)
                 .text('Moviments de caixa')
@@ -237,5 +239,5 @@ exports.imprimirTicketEntrada = function (req, event) {
 }
 
 exports.imprimirTicketCierreCaja = function (req, event) {
-    cierreCaja(event, req.calaixFet, req.nombreTrabajador, req.descuadre, req.nClientes, req.recaudado, req.arrayMovimientos, req.nombreTienda, req.fechaInicio, req.fechaFinal);
+    cierreCaja(event, req.calaixFet, req.nombreTrabajador, req.descuadre, req.nClientes, req.recaudado, req.arrayMovimientos, req.nombreTienda, req.fechaInicio, req.fechaFinal, req.cInicioCaja, req.cFinalCaja);
 }

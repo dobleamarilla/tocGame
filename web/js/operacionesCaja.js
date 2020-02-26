@@ -3,7 +3,8 @@ const TIPO_ENTRADA_DINERO = 2;
 
 async function nuevaSalidaDinero(cantidad, concepto) {
     let fecha = new Date();
-    let nombreTrabajador = (await getTrabajadorActivo()).nombre;
+    let infoTrabajador = await getTrabajadorActivo()
+    let nombreTrabajador = infoTrabajador.nombre;
     let nombreTienda = (await getParametros()).nombreTienda;
     let cajaActual = 0;
 
@@ -14,7 +15,8 @@ async function nuevaSalidaDinero(cantidad, concepto) {
                 tipo: TIPO_SALIDA_DINERO,
                 valor: cantidad,
                 idCaja: idCaja,
-                concepto: concepto
+                concepto: concepto, 
+                idTrabajador: infoTrabajador.idTrabajador
             }).then(function () {
                 $('#botonConfirmarSalida').attr('disabled', false);
                 $("#modalSalidaDinero").modal('hide');
@@ -41,7 +43,8 @@ async function nuevaSalidaDinero(cantidad, concepto) {
 
 async function nuevaEntradaDinero(cantidad) {
     let fecha = new Date();
-    let nombreTrabajador = (await getTrabajadorActivo()).nombre;
+    let infoTrabajador = await getTrabajadorActivo();
+    let nombreTrabajador = infoTrabajador.nombre;
     let nombreTienda = (await getParametros()).nombreTienda;
     let cajaActual = 0;
 
@@ -51,7 +54,8 @@ async function nuevaEntradaDinero(cantidad) {
                 timestamp: fecha,
                 tipo: TIPO_ENTRADA_DINERO,
                 valor: cantidad,
-                idCaja: idCaja
+                idCaja: idCaja, 
+                idTrabajador: infoTrabajador.idTrabajador
             }).then(function () {
                 $('#botonConfirmarEntrada').attr('disabled', false);
                 $("#modalEntradaDinero").modal('hide');
