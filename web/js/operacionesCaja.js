@@ -16,7 +16,9 @@ async function nuevaSalidaDinero(cantidad, concepto) {
                 valor: cantidad,
                 idCaja: idCaja,
                 concepto: concepto, 
-                idTrabajador: infoTrabajador.idTrabajador
+                idTrabajador: infoTrabajador.idTrabajador,
+                enviado: 0, 
+                enTransito: 0
             }).then(function () {
                 $('#botonConfirmarSalida').attr('disabled', false);
                 $("#modalSalidaDinero").modal('hide');
@@ -55,7 +57,9 @@ async function nuevaEntradaDinero(cantidad) {
                 tipo: TIPO_ENTRADA_DINERO,
                 valor: cantidad,
                 idCaja: idCaja, 
-                idTrabajador: infoTrabajador.idTrabajador
+                idTrabajador: infoTrabajador.idTrabajador,
+                enviado: 0, 
+                enTransito: 0
             }).then(function () {
                 $('#botonConfirmarEntrada').attr('disabled', false);
                 $("#modalEntradaDinero").modal('hide');

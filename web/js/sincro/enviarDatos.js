@@ -67,6 +67,7 @@ async function enviarCajas(arrayCajas)
 
 async function enviarMovimientos(arrayMovimientos)
 {
+    console.log(6969);
     var devolver = new Promise((dev, rej)=>{
         db.parametros.toArray().then(infoParams=>{
             let auxObjeto = {
@@ -77,6 +78,7 @@ async function enviarMovimientos(arrayMovimientos)
             if(arrayMovimientos.length > 0)
             {
                 socket.emit('guardar-movimientos', auxObjeto);
+                console.log(auxObjeto);
                 dev(true);
             }
             else

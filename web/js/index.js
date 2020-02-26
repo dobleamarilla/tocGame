@@ -904,10 +904,12 @@ function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
             {
                 enviarCajas(arrayCajas);
             }
+            console.log("hola estoy entrando en movimientos");
             let arrayMovimientos = [];
             db.movimientos.where({enviado: 0, enTransito: 0}).modify(value=>{
                 value.enTransito = 1;
                 arrayMovimientos.push(value);
+                console.log("CREO QUE AQUI YA NO ENTRO");
             }).then(info3=>{
                 if(info3)
                 {
