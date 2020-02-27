@@ -48,13 +48,6 @@ function startDB() {
             installWizard();
         }
     });
-
-    db.parametros.toArray().then(info=>{
-        document.getElementById('iframePedido').setAttribute("src", 'http://silema.hiterp.com/tpvWebReposicion.asp?codiBotiga=' + info[0].codigoTienda);
-    }).catch(err=>{
-        console.log(err);
-        notificacion('Error en vueParemtrosPedido 1', 'error');
-    });
 }
 
 function redondearPrecio(precio) /* REDONDEA AL SEGUNDO DECIMAL */ {
@@ -89,6 +82,13 @@ function loadingToc() {
         imprimirTeclado(0); //Faltan comprobaciones de existencia de teclados y cargar automáticamente el primero.
         clickMenu(0);
         vueTicketMedio.actualizarTicketMedio();
+        
+        db.parametros.toArray().then(info=>{
+            document.getElementById('iframePedido').setAttribute("src", 'http://silema.hiterp.com/tpvWebReposicion.asp?codiBotiga=' + info[0].codigoTienda);
+        }).catch(err=>{
+            console.log(err);
+            notificacion('Error en vueParemtrosPedido 1', 'error');
+        });
     });
 }
 
