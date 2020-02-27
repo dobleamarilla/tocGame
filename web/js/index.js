@@ -48,6 +48,13 @@ function startDB() {
             installWizard();
         }
     });
+
+    db.parametros.toArray().then(info=>{
+        document.getElementById('iframePedido').setAttribute("src", 'http://silema.hiterp.com/tpvWebReposicion.asp?codiBotiga=' + info[0].codigoTienda);
+    }).catch(err=>{
+        console.log(err);
+        notificacion('Error en vueParemtrosPedido 1', 'error');
+    });
 }
 
 function redondearPrecio(precio) /* REDONDEA AL SEGUNDO DECIMAL */ {
@@ -67,6 +74,12 @@ function abrirMenuFichajes() {
 function abrirModalTeclado() {
     botonFichar.setAttribute('class', 'btn btn-default');
     campoNombreTeclado.focus();
+}
+
+function abrirModalPedidos()
+{
+    vueParametrosPedido.insertarUrl;
+    $('#modalPedido').modal('show');
 }
 
 function loadingToc() {
@@ -704,15 +717,25 @@ async function actualizarCesta() {
 function imprimirTicketReal(idTicket) {
     //idTicket, timestamp, total, cesta, tarjeta
     var enviarArray = [];
-    db.tickets.where('idTicket').equals(idTicket).toArray(lista => {
-        for (let i = 0; i < lista[0].cesta.length; i++) {
-            enviarArray.push({ cantidad: lista[0].cesta[i].unidades, articuloNombre: lista[0].cesta[i].nombreArticulo, importe: lista[0].cesta[i].subtotal });
-        }
-        db.parametrosTicket.toArray().then(data => {
-            imprimirEscpos({ numFactura: lista[0].idTicket, arrayCompra: enviarArray, total: lista[0].total, visa: lista[0].tarjeta, tiposIva: lista[0].tiposIva, cabecera: data[0].valorDato, pie: data[1].valorDato });
-        }).catch(err => {
+    db.tickets.where('idTicket').equals(idTicket).toArray(lista => 
+    {
+        db.trabajadores.get(lista[0].idTrabajador).then(infoTrabajador=>{
+            let auxObject2 = null;
+            for (let i = 0; i < lista[0].cesta.length; i++) {
+                auxObject2 = { cantidad: lista[0].cesta[i].unidades, articuloNombre: lista[0].cesta[i].nombreArticulo, importe: lista[0].cesta[i].subtotal };
+                enviarArray.push(auxObject2);
+            }
+            db.parametrosTicket.toArray().then(data => {
+                let auxObject = { numFactura: lista[0].idTicket, arrayCompra: enviarArray, total: lista[0].total, visa: lista[0].tarjeta, tiposIva: lista[0].tiposIva, cabecera: data[0].valorDato, pie: data[1].valorDato, nombreTrabajador: infoTrabajador.nombre };
+                console.log(auxObject);
+                imprimirEscpos(auxObject);
+            }).catch(err => {
+                console.log(err);
+                notificacion('Error al obtener parametros de ticket', 'error');
+            });
+        }).catch(err=>{
             console.log(err);
-            notificacion('Error al obtener parametros de ticket', 'error');
+            notificacion('Error en get trabajadores desde imprimirTicketReal()', 'error');
         });
     });
 }

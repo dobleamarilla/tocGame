@@ -5,7 +5,7 @@ var os = require('os');
 const TIPO_SALIDA_DINERO = 1;
 const TIPO_ENTRADA_DINERO = 2;
 
-var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa, tiposIva, cabecera, pie) {
+var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa, tiposIva, cabecera, pie, nombreDependienta) {
     try {
         var device = new escpos.USB('0x4B8', '0x202'); //USB
         //var device = new escpos.Serial('COM1') //SERIE
@@ -54,6 +54,7 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa,
                 .text(cabecera)
                 .text(`Data: ${fecha.getDate()}-${fecha.getMonth()+1}-${fecha.getFullYear()}  ${fecha.getHours()}:${fecha.getMinutes()}`)
                 .text('Factura simplificada N: ' + numFactura)
+                .text('Ates per: ' + nombreDependienta)
                 .control('LF')
                 .control('LF')
                 .control('LF')
@@ -226,7 +227,7 @@ function errorImpresora(err, event) {
 }
 
 exports.imprimirTicket = function (req, event) {
-    imprimirTicketVenta(event, req.numFactura, req.arrayCompra, req.total, req.visa, req.tiposIva, req.cabecera, req.pie);
+    imprimirTicketVenta(event, req.numFactura, req.arrayCompra, req.total, req.visa, req.tiposIva, req.cabecera, req.pie, req.nombreTrabajador);
 }
 
 exports.imprimirTicketSalida = function (req, event) {

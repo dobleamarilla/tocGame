@@ -959,7 +959,7 @@
                         <div class="col-md-12">
                             <div class="btn-group btn-group-justified" role="group">
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-default botonesMenuPrincipal"
+                                    <button type="button" onclick="abrirModalPedidos();"class="btn btn-default botonesMenuPrincipal"
                                         style="height:80px">Pedidos tienda</button>
                                 </div>
 
@@ -1080,6 +1080,34 @@
     <div id="loading" class="centradoTotal hide">
         <img src="imagenes/loading.gif" alt="Cargando">
     </div>
+    <!-- INICIO MODAL PEDIDO -->
+    <div class="modal fullscreen fade" id="modalPedido" tabindex="-1" role="dialog" aria-labelledby="fullscreen_modal"
+    style="font-family: 'Anton', sans-serif; font-size: 25px;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel-2">Pedido tienda</h4>
+                <ul class="card-actions icons right-top">
+                    <a href="javascript:void(0)" data-dismiss="modal" class="text-white" aria-label="Close">
+                        <i class="zmdi zmdi-close"></i>
+                    </a>
+                    </li>
+                </ul>
+            </div>
+            <div id="vueParametrosPedido" class="modal-body scrollbar">
+                <iframe id="iframePedido" :src="urlPedidos" style="height: 99%; width: 100%;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    style="font-family: 'Anton', sans-serif; font-size: 25px; font-style: normal; color: black;">SALIR</button>
+            </div>
+        </div>
+        <!-- modal-content -->
+    </div>
+    <!-- modal-dialog -->
+</div>
+    <!-- FIN MODAL PEDIDO -->
+
     <!-- END MODALS =============================================-->
     <div id="vueTicketMedio"
         style="position:absolute;bottom:5px;left:10px;    font-family: Anton, sans-serif;    font-size: 30px;    font-style: normal;    color: black;    -webkit-text-stroke: 0.2px black">
@@ -1137,16 +1165,8 @@
     <script src="js/jkeyboard.js"></script>
     <script src="js/tocSockets.js"></script>
     <script>
-        const fs = require('fs');
-        fs.readFile('resources/app/version.json', 'utf8', (err, jsonString) => {
-        if (err) {
-            console.log("Error leyendo la version:", err);
-            return;
-        }
-        const config = JSON.parse(jsonString);
-        var v = config.version;
-        document.getElementById("versionToc").innerHTML = "v " + v;
-    });
+        var versionToc = '1.1.5';
+        document.getElementById("versionToc").innerHTML = "v " + versionToc;
     </script>
     <script>
         versionFooter.addEventListener('dblclick', (e)=>{

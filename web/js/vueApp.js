@@ -374,6 +374,7 @@ function initVueTocGame() {
             }
         }
     });
+
     return {
         caja: vueSetCaja,
         fichajes: vueFichajes,
