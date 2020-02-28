@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 
 function enviar() {
-    ipcRenderer.send('canal1', 'ping pong');
+    ipcRenderer.send('venta', 'ping pong');
 }
 /* RESPUESTAS ACCIONES IPC-MAIN */
 ipcRenderer.on('venta', (ev, args) => {

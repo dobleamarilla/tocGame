@@ -28,7 +28,7 @@ app.on('ready', () => {
         client.connect(8890, '127.0.0.1', function () {
             console.log('Conectado al CoLinux | Venta');
             //var venta_t = `\x02${data.cliente};${data.tienda};${data.tpv};gleidy;${data.ticket};1;${data.importe};;;;;;;\x03`;
-            var venta_t = `\x02252;1;1;gleidy;356;1;1050;;;;;;;\x03`;
+            var venta_t = `\x02252;1;1;gleidy;356;1;5;;;;;;;\x03`;
             client.write(venta_t);
         });
         client.on('data', function (data) {
