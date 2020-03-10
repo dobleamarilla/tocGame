@@ -23,7 +23,7 @@ app.on('ready', () => {
     atajos.atajos(globalShortcut, ventanaPrincipal);
 
     /* ACCIONES IPC-MAIN */
-    ipcMain.on('venta', (event, args) => {
+    ipcMain.on('ventaDatafono', (event, args) => {
         var client = new net.Socket();
         client.connect(8890, '127.0.0.1', function () {
             console.log('Conectado al CoLinux | Venta');
@@ -33,6 +33,7 @@ app.on('ready', () => {
         });
         client.on('data', function (data) {
             console.log('Recibido: ' + data);
+            event.sender.send('ventaDatafono', data);
             client.write('\x02ACK\x03');
             client.destroy();
         });
