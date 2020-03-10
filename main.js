@@ -27,10 +27,17 @@ app.on('ready', () => {
         var client = new net.Socket();
         client.connect(8890, '127.0.0.1', function () {
             console.log('Conectado al CoLinux | Venta');
-            //var venta_t = `\x02${data.cliente};${data.tienda};${data.tpv};gleidy;${data.ticket};1;${data.importe};;;;;;;\x03`;
-            var venta_t = `\x02489;1;1;gleidy;357;1;5;;;;;;;\x03`;
+            var ventaCliente = 489;
+            var nombreDependienta = 'Gleidy';
+            var numeroTicket = 357;
+            var tienda = 1;
+            var tpv = 1;
+            var tipoOperacion = 1; //1=> VENTA
+            var importe = 5; //EN CENTIMOS DE EURO
+            var venta_t = `\x02${ventaCliente};${tienda};${tpv};${tipoOperacion};${numeroTicket};${tipoOperacion};${importe};;;;;;;\x03`;
             client.write(venta_t);
         });
+
         client.on('data', function (data) {
             console.log('Recibido: ' + data);
             event.sender.send('ventaDatafono', data);
@@ -40,7 +47,7 @@ app.on('ready', () => {
         client.on('close', function () {
             console.log('Conexión cerrada');
         });
-        //event.sender.send('canal1', 'PUTO');
+        //event.sender.send('canal1', 'EJEMPLO DE EVENT SENDER SEND');
     });
 
     ipcMain.on('devolucion', (event, args) => {
