@@ -1,10 +1,13 @@
 const { ipcRenderer } = require('electron');
 
+var testEco = null;
+
 function testDatafonoNuevo() {
     ipcRenderer.send('ventaDatafono', 'ping pong');
 }
 /* RESPUESTAS ACCIONES IPC-MAIN */
 ipcRenderer.on('ventaDatafono', (ev, args) => {
+    testEco = args;
     console.log("Datáfono devuelve: ", args);
 });
 ipcRenderer.on('devolucion', (ev, args) => {
