@@ -29,11 +29,11 @@ app.on('ready', () => {
             console.log('Conectado al CoLinux | Venta');
             var ventaCliente = 489;
             var nombreDependienta = 'Gleidy';
-            var numeroTicket = 357;
+            var numeroTicket = 690;
             var tienda = 1;
             var tpv = 1;
             var tipoOperacion = 1; //1=> VENTA
-            var importe = 5; //EN CENTIMOS DE EURO
+            var importe = 1; //EN CENTIMOS DE EURO
             var venta_t = `\x02${ventaCliente};${tienda};${tpv};${tipoOperacion};${numeroTicket};${tipoOperacion};${importe};;;;;;;\x03`;
             client.write(venta_t);
         });
