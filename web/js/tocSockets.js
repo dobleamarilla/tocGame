@@ -1,6 +1,5 @@
 socket.on('install-licencia', (data) => {
-    if (!data.error) 
-    {
+    if (!data.error) {
         db.parametros.put({
             licencia: data.licencia,
             nombreEmpresa: data.nombreEmpresa,
@@ -9,19 +8,19 @@ socket.on('install-licencia', (data) => {
             codigoTienda: data.codigoTienda
         }).then(function () {
             console.log(data.licencia, data.nombreEmpresa, data.database);
-            db.tickets.put({idTicket: data.ultimoTicket, enTransito: 0, enviado: 1}).then(lol=>{
-                db.tickets.where('idTicket').equals(data.ultimoTicket).delete()}).catch(err=>{
-                    console.log(err);
-                    notificacion('Error en insertar último ticket correlativo', 'error');
-                });
+            db.tickets.put({ idTicket: data.ultimoTicket, enTransito: 0, enviado: 1 }).then(lol => {
+                db.tickets.where('idTicket').equals(data.ultimoTicket).delete()
+            }).catch(err => {
+                console.log(err);
+                notificacion('Error en insertar último ticket correlativo', 'error');
+            });
         });
         document.onmousedown = function () { return true };
         $("#installWizard").modal('hide');
         notificacion('Licencia OK!', 'success');
         iniciarTocSockets();
     }
-    else 
-    {
+    else {
         console.log("Hay error: " + data.infoError);
     }
 });
@@ -31,7 +30,7 @@ socket.on('cargar-todo', (data) => {
         if (!data.error) {
             console.log(data);
             // cargarTecladoSockets(data.menus, data.teclas, data.articulos, data.dependentes, data.familias, data.promociones, data.clientes, data.parametrosTicket);
-            cargarTodo(data.parametrosTicket, data.articulos, data.menus, data.dependentes, data.promociones, data.clientes, data.familias, data.teclas).then(()=>{
+            cargarTodo(data.parametrosTicket, data.articulos, data.menus, data.dependentes, data.promociones, data.clientes, data.familias, data.teclas).then(() => {
                 console.log("LA CARGA HA TERMINADO");
             });
         }
@@ -46,26 +45,26 @@ socket.on('cargar-todo', (data) => {
 
 //EN CARGAR TODO, TAMBIÉN SE TIENE QUE DIVIDIR EN LAS ACCIONES INDIVIDUALES PARA LAS HERRAMIENTAS DEL TOC. P.EJ. CARGAR PROMOCIONES(SOLO)
 
-socket.on('confirmarEnvioTicket', (data)=>{
-    db.tickets.where('idTicket').equals(data.idTicket).modify((res)=>{
+socket.on('confirmarEnvioTicket', (data) => {
+    db.tickets.where('idTicket').equals(data.idTicket).modify((res) => {
         res.enviado = 1;
-    }).catch(err=>{
+    }).catch(err => {
         console.log(err);
         notificacion('Error en confirmarEnvioTicket sockets', 'error');
     });
 });
-socket.on('confirmarEnvioCaja', (data)=>{
-    db.cajas.where('id').equals(data.idCaja).modify((res)=>{
+socket.on('confirmarEnvioCaja', (data) => {
+    db.cajas.where('id').equals(data.idCaja).modify((res) => {
         res.enviado = 1;
-    }).catch(err=>{
+    }).catch(err => {
         console.log(err);
         notificacion('Error en confirmarEnvioCaja sockets', 'error');
     });
 });
-socket.on('confirmarEnvioMovimiento', (data)=>{
-    db.movimientos.where('id').equals(data.idMovimiento).modify((res)=>{
+socket.on('confirmarEnvioMovimiento', (data) => {
+    db.movimientos.where('id').equals(data.idMovimiento).modify((res) => {
         res.enviado = 1;
-    }).catch(err=>{
+    }).catch(err => {
         console.log(err);
         notificacion('Error en confirmarEnvioMovimiento sockets', 'error');
     });

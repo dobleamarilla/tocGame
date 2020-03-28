@@ -69,8 +69,7 @@ function abrirModalTeclado() {
     campoNombreTeclado.focus();
 }
 
-function abrirModalPedidos()
-{
+function abrirModalPedidos() {
     vueParametrosPedido.insertarUrl;
     $('#modalPedido').modal('show');
 }
@@ -82,10 +81,10 @@ function loadingToc() {
         imprimirTeclado(0); //Faltan comprobaciones de existencia de teclados y cargar automáticamente el primero.
         clickMenu(0);
         vueTicketMedio.actualizarTicketMedio();
-        
-        db.parametros.toArray().then(info=>{
+
+        db.parametros.toArray().then(info => {
             document.getElementById('iframePedido').setAttribute("src", 'http://silema.hiterp.com/tpvWebReposicion.asp?codiBotiga=' + info[0].codigoTienda);
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err);
             notificacion('Error en vueParemtrosPedido 1', 'error');
         });
@@ -117,7 +116,12 @@ function iniciarToc() {
 
 function desfichar(idTrabajador) {
     var devolver = new Promise((dev, rev) => {
-        db.fichajes.update(idTrabajador, { activo: 0, fichado: 0, final: new Date() }).then(function (res) {
+        let envioFichaje = {
+            idTrabajador: idTrabajador,
+            fecha: new Date()
+        };
+        db.fichajes.update(idTrabajador, { activo: 0, fichado: 0, final: envioFichaje.fecha }).then(function (res) {
+            socketFichaje(envioFichaje, 'SALIDA');
             dev(true);
         }).catch(err => {
             console.log(err);
@@ -196,9 +200,8 @@ function setCaja() { //Tipo 1 = Abrir, Tipo 2 = Cerrar
     }
 }
 
-function setAbrirCaja() 
-{
-    getTrabajadorActivo().then(trabajador=>{
+function setAbrirCaja() {
+    getTrabajadorActivo().then(trabajador => {
         db.cajas.put({
             inicioTime: new Date(),
             finalTime: null,
@@ -542,14 +545,22 @@ function ficharTrabajador(idTrabajador) {
     var devolver = new Promise((dev, rej) => {
         db.trabajadores.where('idTrabajador').equals(idTrabajador).toArray().then(data => {
             if (data.length === 1) {
-                db.fichajes.put({
+                let infoFichaje = {
                     idTrabajador: data[0].idTrabajador,
                     nombre: data[0].nombre,
                     inicio: new Date(),
                     final: null,
                     activo: 1,
                     fichado: 1
-                }).then(function () {
+                };
+
+                let envioFichaje = {
+                    idTrabajador: infoFichaje.idTrabajador,
+                    fecha: infoFichaje.inicio
+                };
+
+                db.fichajes.put(infoFichaje).then(function () {
+                    socketFichaje(envioFichaje, 'ENTRADA');
                     dev(true);
                 }).catch(err => {
                     console.log(err);
@@ -615,8 +626,7 @@ function construirObjetoIvas(idArticulo, unidades) {
 
 async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton, gramos = false) //id, nombre, precio, iva, aPeso
 {
-    try
-    {
+    try {
         /* SAGRADO: SUMABLE ES NORMAL, NO SUMABLE ES A PESO */
         $('#' + idBoton).attr('disabled', true);
         if (sumable || gramos !== false) {
@@ -669,8 +679,7 @@ async function addItemCesta(idArticulo, nombreArticulo, precio, sumable, idBoton
         }
         $('#' + idBoton).attr('disabled', false);
     }
-    catch(err)
-    {
+    catch (err) {
         console.log("Error cafes encontrado");
         console.log(err);
         notificacion('Error en e', 'error');
@@ -717,9 +726,8 @@ async function actualizarCesta() {
 function imprimirTicketReal(idTicket) {
     //idTicket, timestamp, total, cesta, tarjeta
     var enviarArray = [];
-    db.tickets.where('idTicket').equals(idTicket).toArray(lista => 
-    {
-        db.trabajadores.get(lista[0].idTrabajador).then(infoTrabajador=>{
+    db.tickets.where('idTicket').equals(idTicket).toArray(lista => {
+        db.trabajadores.get(lista[0].idTrabajador).then(infoTrabajador => {
             let auxObject2 = null;
             for (let i = 0; i < lista[0].cesta.length; i++) {
                 auxObject2 = { cantidad: lista[0].cesta[i].unidades, articuloNombre: lista[0].cesta[i].nombreArticulo, importe: lista[0].cesta[i].subtotal };
@@ -733,7 +741,7 @@ function imprimirTicketReal(idTicket) {
                 console.log(err);
                 notificacion('Error al obtener parametros de ticket', 'error');
             });
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err);
             notificacion('Error en get trabajadores desde imprimirTicketReal()', 'error');
         });
@@ -771,7 +779,7 @@ function pagarConTarjeta() {
                         {
                             db.activo.toArray().then(res => {
                                 if (res.length === 1) {
-                                    db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0}).then(idTicket => {
+                                    db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0 }).then(idTicket => {
                                         vaciarCesta();
                                         notificacion('¡Ticket creado!', 'success');
                                         $('#modalPago').modal('hide');
@@ -844,7 +852,7 @@ function pagarConEfectivo() {
                     if (lista.length > 0) {
                         db.activo.toArray().then(res => {
                             if (res.length === 1) {
-                                db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0}).then(idTicket => {
+                                db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: false, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0 }).then(idTicket => {
                                     vaciarCesta();
                                     notificacion('¡Ticket creado!', 'success');
                                     $('#modalPago').modal('hide');
@@ -904,53 +912,48 @@ function addMenus() {
         console.log("Menús agregadosadd");
     });
 }
-function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
-{
+function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */ {
     let arrayTickets = [];
-    db.tickets.where({enviado:0, enTransito: 0}).modify((value) => {
+    db.tickets.where({ enviado: 0, enTransito: 0 }).modify((value) => {
         value.enTransito = 1;
         arrayTickets.push(value);
-    }).then(info=>{
-        if(info)
-        {
+    }).then(info => {
+        if (info) {
             enviarTickets(arrayTickets);
         }
         let arrayCajas = [];
-        db.cajas.where({enviado: 0, enTransito: 0}).modify(value=>{
-            if(value.abierta === 0)
-            {
+        db.cajas.where({ enviado: 0, enTransito: 0 }).modify(value => {
+            if (value.abierta === 0) {
                 value.enTransito = 1;
                 arrayCajas.push(value);
             }
-        }).then(info2=>{
-            if(info2)
-            {
+        }).then(info2 => {
+            if (info2) {
                 enviarCajas(arrayCajas);
             }
             console.log("hola estoy entrando en movimientos");
             let arrayMovimientos = [];
-            db.movimientos.where({enviado: 0, enTransito: 0}).modify(value=>{
+            db.movimientos.where({ enviado: 0, enTransito: 0 }).modify(value => {
                 value.enTransito = 1;
                 arrayMovimientos.push(value);
                 console.log("CREO QUE AQUI YA NO ENTRO");
-            }).then(info3=>{
-                if(info3)
-                {
+            }).then(info3 => {
+                if (info3) {
                     enviarMovimientos(arrayMovimientos);
                 }
-            }).catch(err=>{
+            }).catch(err => {
                 console.log(err);
                 notificacion('Error en Dexie Movimientos', 'error');
             })
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err);
             notificacion('Error en Dexie cajas, sincronizarToc()', 'error');
         });
-    }).catch(err=>{
+    }).catch(err => {
         console.log(err);
         notificacion('Error en sincronizarToc()', 'error');
     });
-    
+
 }
 
 var vueSetCaja = null;

@@ -38,25 +38,22 @@ async function enviarTickets(arrayTicket) {
     return devolver;
 }
 
-async function enviarCajas(arrayCajas)
-{
-    var devolver = new Promise((dev, rej)=>{
-        db.parametros.toArray().then(infoParams=>{
+async function enviarCajas(arrayCajas) {
+    var devolver = new Promise((dev, rej) => {
+        db.parametros.toArray().then(infoParams => {
             let auxObjeto = {
                 codigoTienda: infoParams[0].codigoTienda,
                 database: infoParams[0].database,
                 arrayCajas: arrayCajas
             };
-            if(arrayCajas.length > 0)
-            {
+            if (arrayCajas.length > 0) {
                 socket.emit('guardar-caja', auxObjeto);
                 dev(true);
             }
-            else
-            {
+            else {
                 dev(false);
             }
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err);
             notificacion('Error en enviarCajas 1', 'error');
             dev(false);
@@ -65,27 +62,24 @@ async function enviarCajas(arrayCajas)
     return devolver;
 }
 
-async function enviarMovimientos(arrayMovimientos)
-{
+async function enviarMovimientos(arrayMovimientos) {
     console.log(6969);
-    var devolver = new Promise((dev, rej)=>{
-        db.parametros.toArray().then(infoParams=>{
+    var devolver = new Promise((dev, rej) => {
+        db.parametros.toArray().then(infoParams => {
             let auxObjeto = {
                 codigoTienda: infoParams[0].codigoTienda,
                 database: infoParams[0].database,
                 arrayMovimientos: arrayMovimientos
             };
-            if(arrayMovimientos.length > 0)
-            {
+            if (arrayMovimientos.length > 0) {
                 socket.emit('guardar-movimientos', auxObjeto);
                 console.log(auxObjeto);
                 dev(true);
             }
-            else
-            {
+            else {
                 dev(false);
             }
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err);
             notificacion('Error en enviarMovimientos 1', 'error');
             dev(false);
@@ -94,40 +88,51 @@ async function enviarMovimientos(arrayMovimientos)
     return devolver;
 }
 
+async function socketFichaje(infoFichaje, tipo) {
+    db.parametros.toArray().then(info => {
+        var enviarObjeto =
+        {
+            database: info[0].database,
+            infoFichaje: infoFichaje,
+            tipo: tipo,
+            nombreTienda: info.nombreTienda,
+            idTienda: info.codigoTienda
+        };
+        socket.emit('guardarFichajes', enviarObjeto);
+    }).catch(err => {
+        console.log(err);
+        notificacion('Error en enviar fichaje', 'error');
+    });
+}
+
 function limpiarMes(date) {
     var month = date.getMonth() + 1;
     return month < 10 ? '0' + month : '' + month;
 }
 
-function formatearFecha(fecha)
-{
+function formatearFecha(fecha) {
     //yyyy-mm-dd hh:mi:ss (120 MSSQL)
     var devolverString = '';
-    var month = `${fecha.getMonth()+1}`;
+    var month = `${fecha.getMonth() + 1}`;
     var day = `${fecha.getDate()}`;
     var hours = `${fecha.getHours()}`;
     var minutes = `${fecha.getMinutes()}`;
     var seconds = `${fecha.getSeconds()}`;
 
-    if(month.length === 1)
-    {
-        month = '0'+month;
+    if (month.length === 1) {
+        month = '0' + month;
     }
-    if(day.length === 1)
-    {
-        day = '0'+day;
+    if (day.length === 1) {
+        day = '0' + day;
     }
-    if(hours.length === 1)
-    {
-        hours = '0'+hours;
+    if (hours.length === 1) {
+        hours = '0' + hours;
     }
-    if(minutes.length === 1)
-    {
-        minutes = '0'+minutes;
+    if (minutes.length === 1) {
+        minutes = '0' + minutes;
     }
-    if(seconds.length === 1)
-    {
-        seconds = '0'+seconds;
+    if (seconds.length === 1) {
+        seconds = '0' + seconds;
     }
 
     devolverString = `${fecha.getFullYear()}-${month}-${day} ${hours}:${minutes}:${seconds}`;
