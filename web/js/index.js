@@ -116,11 +116,19 @@ function iniciarToc() {
 
 function desfichar(idTrabajador) {
     var devolver = new Promise((dev, rev) => {
+        let fechita = new Date();
         let envioFichaje = {
             idTrabajador: idTrabajador,
-            fecha: new Date()
+            fecha: {
+                year: fechita.getFullYear(),
+                month: fechita.getMonth(),
+                day: fechita.getDate(),
+                hours: fechita.getHours(),
+                minutes: fechita.getMinutes(),
+                seconds: fechita.getSeconds()
+            }
         };
-        db.fichajes.update(idTrabajador, { activo: 0, fichado: 0, final: envioFichaje.fecha }).then(function (res) {
+        db.fichajes.update(idTrabajador, { activo: 0, fichado: 0, final: fechita }).then(function (res) {
             socketFichaje(envioFichaje, 'SALIDA');
             dev(true);
         }).catch(err => {
@@ -556,7 +564,14 @@ function ficharTrabajador(idTrabajador) {
 
                 let envioFichaje = {
                     idTrabajador: infoFichaje.idTrabajador,
-                    fecha: infoFichaje.inicio
+                    fecha: {
+                        year: infoFichaje.inicio.getFullYear(),
+                        month: infoFichaje.inicio.getMonth(),
+                        day: infoFichaje.inicio.getDate(),
+                        hours: infoFichaje.inicio.getHours(),
+                        minutes: infoFichaje.inicio.getMinutes(),
+                        seconds: infoFichaje.inicio.getSeconds()
+                    }
                 };
 
                 db.fichajes.put(infoFichaje).then(function () {
