@@ -95,8 +95,8 @@ async function socketFichaje(infoFichaje, tipo) {
             database: info[0].database,
             infoFichaje: infoFichaje,
             tipo: tipo,
-            nombreTienda: info.nombreTienda,
-            idTienda: info.codigoTienda
+            nombreTienda: info[0].nombreTienda,
+            idTienda: info[0].codigoTienda
         };
         socket.emit('guardarFichajes', enviarObjeto);
     }).catch(err => {
