@@ -785,7 +785,7 @@ function enviarPagoDatafono(){
     db.tickets.toCollection().last(item=>{
         var infoParaDatafono = {
             nombreDependienta: item.idTrabajador.toString(),
-            total: (item.total*100).toString(),
+            total: (item.total*100).toFixed(2),
             idTicket: item.idTicket.toString()
         }
         testDatafonoNuevo(infoParaDatafono);
