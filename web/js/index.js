@@ -790,11 +790,6 @@ function enviarPagoDatafono(){
         }
         testDatafonoNuevo(infoParaDatafono);
     })
-
-    // vaciarCesta();
-    // notificacion('¡Ticket creado!', 'success');
-    // $('#modalPago').modal('hide');
-    // vueTicketMedio.actualizarTicketMedio();
 }
 
 function pagarConTarjeta() {

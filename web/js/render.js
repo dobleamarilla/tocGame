@@ -6,10 +6,27 @@ function testDatafonoNuevo(info) {
     ipcRenderer.send('ventaDatafono', info);
     console.log('Se ejecuta la función de enviar pago al datáfono');
 }
+function controlRespuestaDatafono(respuesta)
+{
+    document.getElementById("esperandoDatafono").classList.add('hide');
+    if(respuesta[1] === 48) //Primero STX, segundo estado transacción: correcta = 48, incorrecta != 48
+    {
+        console.log("Operación APROBADA");
+        vaciarCesta();
+        notificacion('Operación APROBADA', 'success');
+        $('#modalPago').modal('hide');
+        vueTicketMedio.actualizarTicketMedio();
+    }
+    else
+    {
+        console.log("Opración DENEGADA");
+        notificacion('Operación DENEGADA', 'error');
+        $('#modalPago').modal('hide');
+    }
+}
 /* RESPUESTAS ACCIONES IPC-MAIN */
 ipcRenderer.on('ventaDatafono', (ev, args) => {
-    testEco = args;
-    console.log("Datáfono devuelve: ", args);
+    controlRespuestaDatafono(args);
 });
 ipcRenderer.on('devolucion', (ev, args) => {
 
