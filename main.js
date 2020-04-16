@@ -7,7 +7,7 @@ var impresora = require('./componentes/impresora');
 var tecladoVirtual = require('./componentes/teclado');
 var atajos = require('./componentes/atajos');
 var acciones = require('./componentes/acciones');
-var escpos = require('escpos');
+//var escpos = require('escpos');
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 app.on('ready', () => {
@@ -23,17 +23,17 @@ app.on('ready', () => {
     atajos.atajos(globalShortcut, ventanaPrincipal);
 
     /* ACCIONES IPC-MAIN */
-    ipcMain.on('ventaDatafono', (event, args) => {
+    ipcMain.on('ventaDatafono', (event, info) => {
         var client = new net.Socket();
         client.connect(8890, '127.0.0.1', function () {
             console.log('Conectado al CoLinux | Venta');
             var ventaCliente = 489;
-            var nombreDependienta = 'Gleidy';
-            var numeroTicket = 690;
+            var nombreDependienta = info.nombreDependienta;
+            var numeroTicket = info.idTicket;
             var tienda = 1;
             var tpv = 1;
             var tipoOperacion = 1; //1=> VENTA
-            var importe = 1; //EN CENTIMOS DE EURO
+            var importe = info.total; //EN CENTIMOS DE EURO
             var venta_t = `\x02${ventaCliente};${tienda};${tpv};${tipoOperacion};${numeroTicket};${tipoOperacion};${importe};;;;;;;\x03`;
             client.write(venta_t);
         });

@@ -780,6 +780,22 @@ function fichadoYActivo() {
     return devolver;
 }
 
+function enviarPagoDatafono(){
+    db.tickets.toCollection().last(item=>{
+        var infoParaDatafono = {
+            nombreDependienta: item.idTrabajador.toString(),
+            total: (item.total*100).toString(),
+            idTicket: item.idTicket.toString()
+        }
+        testDatafonoNuevo(infoParaDatafono);
+    })
+
+    vaciarCesta();
+    notificacion('¡Ticket creado!', 'success');
+    $('#modalPago').modal('hide');
+    vueTicketMedio.actualizarTicketMedio();
+}
+
 function pagarConTarjeta() {
     //var idTicket = generarIdTicket();
     var time = new Date();
@@ -790,26 +806,18 @@ function pagarConTarjeta() {
             db.cesta.toArray(lista => {
                 if (lista) {
                     if (lista.length > 0) {
-                        if (1 == 1) //emitirPagoDatafono()) //Se envía la señal al datáfono, si todo es correcto, devuelve true. ESTO DEBERÁ SER UNA PROMESA, POR LO QUE MÁS ADELANTE HABRÁ QUE CAMBIAR LA ESTRUCTURA DE ACCESO A ESTA FUNCIÓN
-                        {
-                            db.activo.toArray().then(res => {
-                                if (res.length === 1) {
-                                    db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0 }).then(idTicket => {
-                                        vaciarCesta();
-                                        notificacion('¡Ticket creado!', 'success');
-                                        $('#modalPago').modal('hide');
-                                        vueTicketMedio.actualizarTicketMedio();
-                                    });
-                                } else {
-                                    console.log('Error #66');
-                                }
-                            }).catch(err => {
-                                console.log(err);
-                                notificacion('Error #55');
-                            });
-                        } else {
-                            notificacion('Error al pagar con datáfono', 'error');
-                        }
+                        db.activo.toArray().then(res => {
+                            if (res.length === 1) {
+                                db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0 }).then(idTicket => {
+                                    enviarPagoDatafono();
+                                });
+                            } else {
+                                console.log('Error #66');
+                            }
+                        }).catch(err => {
+                            console.log(err);
+                            notificacion('Error #55');
+                        });
                     } else {
                         notificacion('Error. ¡No hay nada en la cesta!', 'error');
                     }
@@ -894,7 +902,7 @@ function pagarConEfectivo() {
 }
 
 function abrirPago() {
-    vueSelectDependienta.actualizarSelectTrabajadores();
+    //vueSelectDependienta.actualizarSelectTrabajadores();
     db.cesta.toArray(lista => {
         if (lista) {
             if (lista.length > 0) {

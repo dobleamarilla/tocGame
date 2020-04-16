@@ -416,11 +416,9 @@
                                 alt="Imagen de tarjetas" onclick="pagarConEfectivo();">
                         </div>
                     </div>
-                    <div id="vueListaTrabajadoresFichados" class="row">
-                        <div class="col-md-12">
-                            <span v-for="trabajador of listaFichados">
-                                <button type="button" class="btn btn-primary" @click="test(trabajador.idTrabajador)">{{trabajador.nombre}}</button>
-                            </span>
+                    <div class="row">
+                        <div id="esperandoDatafono" class="col-md-12 text-center hide">
+                            <img src="imagenes/loading2.gif" alt="">
                         </div>
                     </div>
                     <div class="row hide" id="rowImprimirTicket" style="text-align: center;">
