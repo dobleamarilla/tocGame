@@ -7,7 +7,7 @@ var impresora = require('./componentes/impresora');
 var tecladoVirtual = require('./componentes/teclado');
 var atajos = require('./componentes/atajos');
 var acciones = require('./componentes/acciones');
-//var escpos = require('escpos');
+//var escpos = require('n');
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 app.on('ready', () => {
@@ -27,7 +27,7 @@ app.on('ready', () => {
         var client = new net.Socket();
         client.connect(8890, '127.0.0.1', function () {
             console.log('Conectado al CoLinux | Venta');
-            var ventaCliente = 489;
+            var ventaCliente = 252;
             var nombreDependienta = info.nombreDependienta;
             var numeroTicket = info.idTicket;
             var tienda = 1;
