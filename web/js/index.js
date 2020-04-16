@@ -781,6 +781,7 @@ function fichadoYActivo() {
 }
 
 function enviarPagoDatafono(){
+    document.getElementById("esperandoDatafono").classList.remove('hide');
     db.tickets.toCollection().last(item=>{
         var infoParaDatafono = {
             nombreDependienta: item.idTrabajador.toString(),
@@ -790,10 +791,10 @@ function enviarPagoDatafono(){
         testDatafonoNuevo(infoParaDatafono);
     })
 
-    vaciarCesta();
-    notificacion('¡Ticket creado!', 'success');
-    $('#modalPago').modal('hide');
-    vueTicketMedio.actualizarTicketMedio();
+    // vaciarCesta();
+    // notificacion('¡Ticket creado!', 'success');
+    // $('#modalPago').modal('hide');
+    // vueTicketMedio.actualizarTicketMedio();
 }
 
 function pagarConTarjeta() {

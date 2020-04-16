@@ -4,6 +4,7 @@ var testEco = null;
 
 function testDatafonoNuevo(info) {
     ipcRenderer.send('ventaDatafono', info);
+    console.log('Se ejecuta la función de enviar pago al datáfono');
 }
 /* RESPUESTAS ACCIONES IPC-MAIN */
 ipcRenderer.on('ventaDatafono', (ev, args) => {
