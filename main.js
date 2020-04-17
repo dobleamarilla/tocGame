@@ -34,7 +34,8 @@ app.on('ready', () => {
             var tpv = 1;
             var tipoOperacion = 1; //1=> VENTA
             var importe = info.total; //EN CENTIMOS DE EURO
-            var venta_t = `\x02${ventaCliente};${tienda};${tpv};${tipoOperacion};${numeroTicket};${tipoOperacion};${importe};;;;;;;\x03`;
+            var venta_t = `\x02${ventaCliente};${tienda};${tpv};${nombreDependienta};${numeroTicket};${tipoOperacion};${importe};;;;;;;\x03`;
+            console.log('cliente: ', ventaCliente, ' tienda: ', tienda, ' tpv: ', tpv, ' tipoOperacion: ', tipoOperacion, ' numeroTicket: ', numeroTicket, ' nombreDependienta: ', nombreDependienta, ' importe: ', importe);
             client.write(venta_t);
         });
 
