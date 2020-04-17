@@ -27,7 +27,7 @@ app.on('ready', () => {
         var client = new net.Socket();
         client.connect(8890, '127.0.0.1', function () {
             console.log('Conectado al CoLinux | Venta');
-            var ventaCliente = 252;
+            var ventaCliente = 489;
             var nombreDependienta = info.nombreDependienta;
             var numeroTicket = info.idTicket;
             var tienda = 1;
@@ -67,6 +67,10 @@ app.on('ready', () => {
     ipcMain.on('imprimirSalidaDinero', (event, args) => {
 
         impresora.imprimirTicketSalida(args, event);
+    });
+    ipcMain.on('abrirCajon', (event, args) => {
+
+        impresora.abrirCajon(event);
     });
     ipcMain.on('imprimirEntradaDinero', (event, args) => {
 

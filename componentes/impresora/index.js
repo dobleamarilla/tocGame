@@ -150,6 +150,22 @@ var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDe
         errorImpresora(err, event);
     }
 }
+var abrirCajon = function (event) {
+    try {
+        var device = new escpos.USB('0x4B8', '0x202'); //USB
+        //var device = new escpos.Serial('COM1') //SERIE
+        var options = { encoding: "GB18030" };
+        var printer = new escpos.Printer(device, options);
+        device.open(function () {
+            printer
+                .cashdraw(2)
+                .close()
+        });
+    }
+    catch (err) {
+        errorCajon(err, event);
+    }
+}
 
 var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClientes, recaudado, arrayMovimientos, nombreTienda, fI, fF, cInicioCaja, cFinalCaja) {
     try {
@@ -225,6 +241,19 @@ function errorImpresora(err, event) {
         }
     }
 }
+function errorCajon(err, event) {
+    console.log("No al abrir cajón");
+    console.log(err);
+    event.sender.send('falloImpresora', 'Error al abrir cajón');
+    if (os.platform() === 'win32') { //
+
+    }
+    else {
+        if (os.platform() === 'linux') {
+            exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
+        }
+    }
+}
 
 exports.imprimirTicket = function (req, event) {
     imprimirTicketVenta(event, req.numFactura, req.arrayCompra, req.total, req.visa, req.tiposIva, req.cabecera, req.pie, req.nombreTrabajador);
@@ -241,4 +270,8 @@ exports.imprimirTicketEntrada = function (req, event) {
 
 exports.imprimirTicketCierreCaja = function (req, event) {
     cierreCaja(event, req.calaixFet, req.nombreTrabajador, req.descuadre, req.nClientes, req.recaudado, req.arrayMovimientos, req.nombreTienda, req.fechaInicio, req.fechaFinal, req.cInicioCaja, req.cFinalCaja);
+}
+
+exports.abrirCajon = function(event){
+    abrirCajon(event);
 }

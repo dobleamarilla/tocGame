@@ -24,6 +24,9 @@ function controlRespuestaDatafono(respuesta)
         $('#modalPago').modal('hide');
     }
 }
+function abrirCajon(){
+    ipcRenderer.send('abrirCajon', '');
+}
 /* RESPUESTAS ACCIONES IPC-MAIN */
 ipcRenderer.on('ventaDatafono', (ev, args) => {
     controlRespuestaDatafono(args);
