@@ -1,6 +1,7 @@
 var escpos = require('escpos');
 var exec = require('child_process').exec;
 var os = require('os');
+escpos.USB = require('escpos-usb');
 
 const TIPO_SALIDA_DINERO = 1;
 const TIPO_ENTRADA_DINERO = 2;

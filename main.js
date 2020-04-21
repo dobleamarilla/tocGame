@@ -7,7 +7,7 @@ var impresora = require('./componentes/impresora');
 var tecladoVirtual = require('./componentes/teclado');
 var atajos = require('./componentes/atajos');
 var acciones = require('./componentes/acciones');
-//var escpos = require('n');
+// var escpos = require('escpos');
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 app.on('ready', () => {
