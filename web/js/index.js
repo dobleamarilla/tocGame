@@ -576,6 +576,7 @@ function ficharTrabajador(idTrabajador) {
 
                 db.fichajes.put(infoFichaje).then(function () {
                     socketFichaje(envioFichaje, 'ENTRADA');
+                    iniciarToc();
                     dev(true);
                 }).catch(err => {
                     console.log(err);
@@ -780,12 +781,12 @@ function fichadoYActivo() {
     return devolver;
 }
 
-function enviarPagoDatafono(){
+function enviarPagoDatafono() {
     document.getElementById("esperandoDatafono").classList.remove('hide');
-    db.tickets.toCollection().last(item=>{
+    db.tickets.toCollection().last(item => {
         var infoParaDatafono = {
             nombreDependienta: item.idTrabajador.toString(),
-            total: Number((item.total*100).toFixed(2)).toString(),
+            total: Number((item.total * 100).toFixed(2)).toString(),
             idTicket: item.idTicket.toString()
         }
         testDatafonoNuevo(infoParaDatafono);
