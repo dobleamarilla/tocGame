@@ -806,7 +806,7 @@ function pagarConTarjeta() {
                         db.activo.toArray().then(res => {
                             if (res.length === 1) {
                                 db.tickets.put({ timestamp: time, total: Number(totalCesta.innerHTML), cesta: lista, tarjeta: true, idCaja: currentCaja, idTrabajador: res[0].idTrabajador, tiposIva: calcularBasesTicket(lista), enviado: 0, enTransito: 0 }).then(idTicket => {
-                                    enviarPagoDatafono();
+                                    //enviarPagoDatafono(); ACTIVAR SOLO PARA CLEARONE
                                 });
                             } else {
                                 console.log('Error #66');
