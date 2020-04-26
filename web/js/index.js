@@ -13,7 +13,7 @@ function startDB() {
         promociones: 'id, fechaInicio, fechaFinal, principal, cantidadPrincipal, secundario, cantidadSecundario, precioFinal',
         menus: 'id, nombre, color',
         submenus: 'id, idPadre, nombre, idTeclado, color',
-        parametros: 'licencia, nombreEmpresa, database, nombreTienda, codigoTienda',
+        parametros: 'licencia, nombreEmpresa, database, nombreTienda, codigoTienda, tipoImpresora',
         cajas: '++id, inicioTime, finalTime, inicioDependenta, finalDependenta, totalApertura, totalCierre, descuadre, abierta, recaudado, nClientes, detalleApertura, detalleCierre, [enviado+enTransito]',
         movimientos: '++id, timestamp, tipo, valor, idCaja, concepto, idTrabajador, [enviado+enTransito]',
         clientes: 'id, nombre, tarjetaCliente',
@@ -932,47 +932,53 @@ function addMenus() {
         console.log("Menús agregadosadd");
     });
 }
-function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */ {
-    let arrayTickets = [];
-    db.tickets.where({ enviado: 0, enTransito: 0 }).modify((value) => {
-        value.enTransito = 1;
-        arrayTickets.push(value);
-    }).then(info => {
-        if (info) {
-            enviarTickets(arrayTickets);
-        }
-        let arrayCajas = [];
-        db.cajas.where({ enviado: 0, enTransito: 0 }).modify(value => {
-            if (value.abierta === 0) {
-                value.enTransito = 1;
-                arrayCajas.push(value);
+function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */ 
+{
+    if(!modoDesarrollador){
+        let arrayTickets = [];
+        db.tickets.where({ enviado: 0, enTransito: 0 }).modify((value) => {
+            value.enTransito = 1;
+            arrayTickets.push(value);
+        }).then(info => {
+            if (info) {
+                enviarTickets(arrayTickets);
             }
-        }).then(info2 => {
-            if (info2) {
-                enviarCajas(arrayCajas);
-            }
-            console.log("hola estoy entrando en movimientos");
-            let arrayMovimientos = [];
-            db.movimientos.where({ enviado: 0, enTransito: 0 }).modify(value => {
-                value.enTransito = 1;
-                arrayMovimientos.push(value);
-                console.log("CREO QUE AQUI YA NO ENTRO");
-            }).then(info3 => {
-                if (info3) {
-                    enviarMovimientos(arrayMovimientos);
+            let arrayCajas = [];
+            db.cajas.where({ enviado: 0, enTransito: 0 }).modify(value => {
+                if (value.abierta === 0) {
+                    value.enTransito = 1;
+                    arrayCajas.push(value);
                 }
+            }).then(info2 => {
+                if (info2) {
+                    enviarCajas(arrayCajas);
+                }
+                console.log("Sincronizando");
+                let arrayMovimientos = [];
+                db.movimientos.where({ enviado: 0, enTransito: 0 }).modify(value => {
+                    value.enTransito = 1;
+                    arrayMovimientos.push(value);
+                }).then(info3 => {
+                    if (info3) {
+                        enviarMovimientos(arrayMovimientos);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    notificacion('Error en Dexie Movimientos', 'error');
+                })
             }).catch(err => {
                 console.log(err);
-                notificacion('Error en Dexie Movimientos', 'error');
-            })
+                notificacion('Error en Dexie cajas, sincronizarToc()', 'error');
+            });
         }).catch(err => {
             console.log(err);
-            notificacion('Error en Dexie cajas, sincronizarToc()', 'error');
+            notificacion('Error en sincronizarToc()', 'error');
         });
-    }).catch(err => {
-        console.log(err);
-        notificacion('Error en sincronizarToc()', 'error');
-    });
+    }
+    else
+    {
+        console.log('Modo desarrollador activo');
+    }
 
 }
 

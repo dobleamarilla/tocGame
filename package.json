@@ -14,6 +14,7 @@
   "description": "",
   "dependencies": {
     "escpos": "^3.0.0-alpha.3",
+    "escpos-serialport": "^3.0.0-alpha.2",
     "escpos-usb": "^3.0.0-alpha.2",
     "jq-keyboard": "^1.0.2",
     "jquery": "^3.4.1",
