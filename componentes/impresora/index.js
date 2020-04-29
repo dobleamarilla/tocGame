@@ -14,7 +14,7 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa,
             baudRate: 115000,
             stopBit: 2
         }) //SERIE
-        //var options = { encoding: "latin1" };
+
         var printer = new escpos.Printer(device);
 
         var detalles = '';
@@ -91,8 +91,13 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa,
 
 var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDependienta, nombreTienda, concepto) {
     try {
+        exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
         //var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0') //SERIE
+        var device = new escpos.Serial('/dev/ttyS0', {
+            baudRate: 115000,
+            stopBit: 2
+        }) //SERIE
+
         var options = { encoding: "GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
@@ -124,8 +129,12 @@ var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDepe
 
 var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDependienta, nombreTienda) {
     try {
+        exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
         //var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0') //SERIE
+        var device = new escpos.Serial('/dev/ttyS0', {
+            baudRate: 115000,
+            stopBit: 2
+        }) //SERIE
         var options = { encoding: "GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
@@ -157,8 +166,12 @@ var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDe
 }
 var abrirCajon = function (event) {
     try {
+        exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
         //var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0') //SERIE
+        var device = new escpos.Serial('/dev/ttyS0', {
+            baudRate: 115000,
+            stopBit: 2
+        }) //SERIE
         var options = { encoding: "GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
@@ -192,8 +205,12 @@ var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClien
             auxFecha = null;
         }
 
-        // var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0') //SERIE
+        exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
+        //var device = new escpos.USB('0x4B8', '0x202'); //USB
+        var device = new escpos.Serial('/dev/ttyS0', {
+            baudRate: 115000,
+            stopBit: 2
+        }) //SERIE
         var options = { encoding: "ISO-8859-15"}; //"GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
