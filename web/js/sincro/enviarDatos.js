@@ -17,7 +17,8 @@ async function enviarTickets(arrayTicket) {
                         nombreTabla: nombreTabla,
                         fecha: formatearFecha(infoTicket.timestamp),
                         database: database,
-                        licencia: licencia
+                        licencia: licencia,
+                        tarjeta: infoTicket.tarjeta
                     };
                     socket.emit('guardar-ticket', auxObjeto);
                     console.log(auxObjeto);
