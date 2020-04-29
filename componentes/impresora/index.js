@@ -8,6 +8,7 @@ const TIPO_ENTRADA_DINERO = 2;
 
 var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa, tiposIva, cabecera, pie, nombreDependienta) {
     try {
+        exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
         //var device = new escpos.USB('0x4B8', '0x202'); //USB
         var device = new escpos.Serial('/dev/ttyS0', {
             baudRate: 115000,
