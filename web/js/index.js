@@ -50,6 +50,11 @@ function startDB() {
     });
 }
 
+function testDeEze()
+{
+    socket.emit('eze-test', 'datos aquí');    
+}
+
 function redondearPrecio(precio) /* REDONDEA AL SEGUNDO DECIMAL */ {
     return Math.round(precio * 100) / 100;
 }
@@ -70,8 +75,16 @@ function abrirModalTeclado() {
 }
 
 function abrirModalPedidos() {
-    vueParametrosPedido.insertarUrl;
-    $('#modalPedido').modal('show');
+    db.parametros.toArray().then(info => {
+        let urrl = 'http://silema.hiterp.com/tpvWebReposicion.asp?codiBotiga=' + info[0].codigoTienda;
+        console.log('La URL es: ' + urrl)
+        document.getElementById('iframePedido').setAttribute("src", urrl);
+        vueParametrosPedido.insertarUrl;
+        $('#modalPedido').modal('show');
+    }).catch(err => {
+        console.log(err);
+        notificacion('Error en vueParemtrosPedido 1', 'error');
+    });
 }
 
 function loadingToc() {
@@ -81,13 +94,6 @@ function loadingToc() {
         imprimirTeclado(0); //Faltan comprobaciones de existencia de teclados y cargar automáticamente el primero.
         clickMenu(0);
         vueTicketMedio.actualizarTicketMedio();
-
-        db.parametros.toArray().then(info => {
-            document.getElementById('iframePedido').setAttribute("src", 'http://silema.hiterp.com/tpvWebReposicion.asp?codiBotiga=' + info[0].codigoTienda);
-        }).catch(err => {
-            console.log(err);
-            notificacion('Error en vueParemtrosPedido 1', 'error');
-        });
     });
 }
 
