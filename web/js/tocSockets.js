@@ -43,6 +43,10 @@ socket.on('cargar-todo', (data) => {
     }
 });
 
+socket.on('error', (info)=>{
+    notificacion(info, 'error');
+});
+
 //EN CARGAR TODO, TAMBIÉN SE TIENE QUE DIVIDIR EN LAS ACCIONES INDIVIDUALES PARA LAS HERRAMIENTAS DEL TOC. P.EJ. CARGAR PROMOCIONES(SOLO)
 
 socket.on('confirmarEnvioTicket', (data) => {

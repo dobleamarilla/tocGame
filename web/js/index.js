@@ -43,7 +43,15 @@ function startDB() {
 
     comprobarConfiguracion().then((res) => {
         if (res) {
-            iniciarToc();
+            descargarClientes().then(res1=>{
+                if(res1){
+                    descargarTrabajadores().then(res2=>{
+                        if(res2){
+                            iniciarToc();
+                        }
+                    });
+                }
+            });
         } else {
             installWizard();
         }
@@ -986,6 +994,14 @@ function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */
         console.log('Modo desarrollador activo');
     }
 
+}
+
+function descargarDatos()
+{
+    descargarArticulos();
+    descargarPromociones();
+    descargarFamilias();
+    descargarTeclado();
 }
 
 var vueSetCaja = null;

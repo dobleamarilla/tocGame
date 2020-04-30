@@ -1147,6 +1147,7 @@
     <script src="js/sincro/insertarDatos.js"></script>
     <script src="js/sincro/limpiarDatos.js"></script>
     <script src="js/sincro/enviarDatos.js"></script>
+    <script src="js/sincro/descargarDatos.js"></script>
     <script src="js/socket.io.js"></script>
     <script src="assets/js/bootstrap-select.min.js"></script>
 
@@ -1178,6 +1179,7 @@
     </script>
     <script>
         setInterval(sincronizarToc, 1500);
+        setInterval(descargarDatos, 7200000); //CADA 2 HORAS
     </script>
 </body>
 </html>
