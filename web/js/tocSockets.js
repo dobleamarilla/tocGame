@@ -47,6 +47,15 @@ socket.on('error', (info)=>{
     notificacion(info, 'error');
 });
 
+socket.on('ordenSincronizarTodo', async function(){
+    await descargarClientes();
+    await descargarTrabajadores();
+    await descargarArticulos();
+    await descargarFamilias();
+    await descargarPromociones();
+    await descargarTeclado();
+    refrescarPrograma();
+});
 //EN CARGAR TODO, TAMBIÉN SE TIENE QUE DIVIDIR EN LAS ACCIONES INDIVIDUALES PARA LAS HERRAMIENTAS DEL TOC. P.EJ. CARGAR PROMOCIONES(SOLO)
 
 socket.on('confirmarEnvioTicket', (data) => {

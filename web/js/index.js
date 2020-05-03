@@ -42,17 +42,11 @@ function startDB() {
     vueSelectDependienta = aux.selectDependienta;
 
     comprobarConfiguracion().then((res) => {
-        if (res) {
-            descargarClientes().then(res1=>{
-                if(res1){
-                    descargarTrabajadores().then(res2=>{
-                        if(res2){
-                            iniciarToc();
-                        }
-                    });
-                }
-            });
-        } else {
+        if (res) 
+        {
+            iniciarToc();
+        } else 
+        {
             installWizard();
         }
     });
