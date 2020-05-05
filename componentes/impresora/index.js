@@ -9,21 +9,19 @@ const TIPO_ENTRADA_DINERO = 2;
 var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa, tiposIva, cabecera, pie, nombreDependienta) {
     try {
         exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
-        //var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0', {
-            baudRate: 115000,
-            stopBit: 2
-        }) //SERIE
+        var device = new escpos.USB('0x4B8', '0x202'); //USB
+        // var device = new escpos.Serial('/dev/ttyS0', {
+        //     baudRate: 115000,
+        //     stopBit: 2
+        // }) //SERIE
 
         var printer = new escpos.Printer(device);
 
         var detalles = '';
         var pagoTarjeta = '';
         for (let i = 0; i < arrayCompra.length; i++) {
-            if(arrayCompra[i].articuloNombre.length < 20)
-            {
-                while(arrayCompra[i].articuloNombre.length < 20)
-                {
+            if (arrayCompra[i].articuloNombre.length < 20) {
+                while (arrayCompra[i].articuloNombre.length < 20) {
                     arrayCompra[i].articuloNombre += ' ';
                 }
             }
@@ -34,20 +32,17 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa,
             pagoTarjeta = '----------- PAGADO CON TARJETA ---------\n';
         }
 
-        var detalleIva4     = '';
-        var detalleIva10    = '';
-        var detalleIva21    = '';
-        var detalleiva         = '';
-        if(tiposIva.importe1 > 0)
-        {
+        var detalleIva4 = '';
+        var detalleIva10 = '';
+        var detalleIva21 = '';
+        var detalleiva = '';
+        if (tiposIva.importe1 > 0) {
             detalleIva4 = `${tiposIva.base1}        4%: ${tiposIva.valor1}      ${tiposIva.importe1}\n`;
         }
-        if(tiposIva.importe2 > 0)
-        {
+        if (tiposIva.importe2 > 0) {
             detalleIva10 = `${tiposIva.base2}        10%: ${tiposIva.valor2}      ${tiposIva.importe2}\n`;
         }
-        if(tiposIva.importe3 > 0)
-        {
+        if (tiposIva.importe3 > 0) {
             detalleIva21 = `${tiposIva.base3}       21%: ${tiposIva.valor3}      ${tiposIva.importe3}\n`;
         }
         detalleIva = detalleIva4 + detalleIva10 + detalleIva21;
@@ -57,7 +52,7 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa,
                 .encode('latin1')
                 .size(1, 1)
                 .text(cabecera)
-                .text(`Data: ${fecha.getDate()}-${fecha.getMonth()+1}-${fecha.getFullYear()}  ${fecha.getHours()}:${fecha.getMinutes()}`)
+                .text(`Data: ${fecha.getDate()}-${fecha.getMonth() + 1}-${fecha.getFullYear()}  ${fecha.getHours()}:${fecha.getMinutes()}`)
                 .text('Factura simplificada N: ' + numFactura)
                 .text('Ates per: ' + nombreDependienta)
                 .control('LF')
@@ -92,11 +87,11 @@ var imprimirTicketVenta = function (event, numFactura, arrayCompra, total, visa,
 var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDependienta, nombreTienda, concepto) {
     try {
         exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
-        //var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0', {
-            baudRate: 115000,
-            stopBit: 2
-        }) //SERIE
+        var device = new escpos.USB('0x4B8', '0x202'); //USB
+        // var device = new escpos.Serial('/dev/ttyS0', {
+        //     baudRate: 115000,
+        //     stopBit: 2
+        // }) //SERIE
 
         var options = { encoding: "GB18030" };
         var printer = new escpos.Printer(device, options);
@@ -130,11 +125,11 @@ var salidaDinero = function (event, totalRetirado, cajaActual, fecha, nombreDepe
 var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDependienta, nombreTienda) {
     try {
         exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
-        //var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0', {
-            baudRate: 115000,
-            stopBit: 2
-        }) //SERIE
+        var device = new escpos.USB('0x4B8', '0x202'); //USB
+        // var device = new escpos.Serial('/dev/ttyS0', {
+        //     baudRate: 115000,
+        //     stopBit: 2
+        // }) //SERIE
         var options = { encoding: "GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
@@ -167,11 +162,11 @@ var entradaDinero = function (event, totalIngresado, cajaActual, fecha, nombreDe
 var abrirCajon = function (event) {
     try {
         exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
-        //var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0', {
-            baudRate: 115000,
-            stopBit: 2
-        }) //SERIE
+        var device = new escpos.USB('0x4B8', '0x202'); //USB
+        // var device = new escpos.Serial('/dev/ttyS0', {
+        //     baudRate: 115000,
+        //     stopBit: 2
+        // }) //SERIE
         var options = { encoding: "GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
@@ -187,31 +182,28 @@ var abrirCajon = function (event) {
 
 var cierreCaja = function (event, calaixFet, nombreTrabajador, descuadre, nClientes, recaudado, arrayMovimientos, nombreTienda, fI, fF, cInicioCaja, cFinalCaja) {
     try {
-        var fechaInicio     = new Date(fI);
-        var fechaFinal      = new Date(fF);
+        var fechaInicio = new Date(fI);
+        var fechaFinal = new Date(fF);
 
         var textoMovimientos = '';
-        for(let i = 0; i < arrayMovimientos.length; i++)
-        {
+        for (let i = 0; i < arrayMovimientos.length; i++) {
             var auxFecha = new Date(arrayMovimientos[i].timestamp);
-            if(arrayMovimientos[i].tipo === TIPO_SALIDA_DINERO)
-            {
-                textoMovimientos += `${i+1}: Salida:\n           Cantidad: -${arrayMovimientos[i].valor}\n           Fecha: ${auxFecha.getDate()}/${auxFecha.getMonth()}/${auxFecha.getFullYear()}  ${auxFecha.getHours()}:${auxFecha.getMinutes()}\n           Concepto: ${arrayMovimientos[i].concepto}\n`;
+            if (arrayMovimientos[i].tipo === TIPO_SALIDA_DINERO) {
+                textoMovimientos += `${i + 1}: Salida:\n           Cantidad: -${arrayMovimientos[i].valor}\n           Fecha: ${auxFecha.getDate()}/${auxFecha.getMonth()}/${auxFecha.getFullYear()}  ${auxFecha.getHours()}:${auxFecha.getMinutes()}\n           Concepto: ${arrayMovimientos[i].concepto}\n`;
             }
-            if(arrayMovimientos[i].tipo === TIPO_ENTRADA_DINERO)
-            {
-                textoMovimientos += `${i+1}: Entrada:\n            Cantidad: +${arrayMovimientos[i].valor}\n            Fecha: ${auxFecha.getDate()}/${auxFecha.getMonth()}/${auxFecha.getFullYear()}  ${auxFecha.getHours()}:${auxFecha.getMinutes()}\n            Concepto: ${arrayMovimientos[i].concepto}\n`;
+            if (arrayMovimientos[i].tipo === TIPO_ENTRADA_DINERO) {
+                textoMovimientos += `${i + 1}: Entrada:\n            Cantidad: +${arrayMovimientos[i].valor}\n            Fecha: ${auxFecha.getDate()}/${auxFecha.getMonth()}/${auxFecha.getFullYear()}  ${auxFecha.getHours()}:${auxFecha.getMinutes()}\n            Concepto: ${arrayMovimientos[i].concepto}\n`;
             }
             auxFecha = null;
         }
 
         exec('echo sa | sudo -S sh /home/hit/tocGame/scripts/permisos.sh');
-        //var device = new escpos.USB('0x4B8', '0x202'); //USB
-        var device = new escpos.Serial('/dev/ttyS0', {
-            baudRate: 115000,
-            stopBit: 2
-        }) //SERIE
-        var options = { encoding: "ISO-8859-15"}; //"GB18030" };
+        var device = new escpos.USB('0x4B8', '0x202'); //USB
+        // var device = new escpos.Serial('/dev/ttyS0', {
+        //     baudRate: 115000,
+        //     stopBit: 2
+        // }) //SERIE
+        var options = { encoding: "ISO-8859-15" }; //"GB18030" };
         var printer = new escpos.Printer(device, options);
         device.open(function () {
 
@@ -295,6 +287,6 @@ exports.imprimirTicketCierreCaja = function (req, event) {
     cierreCaja(event, req.calaixFet, req.nombreTrabajador, req.descuadre, req.nClientes, req.recaudado, req.arrayMovimientos, req.nombreTienda, req.fechaInicio, req.fechaFinal, req.cInicioCaja, req.cFinalCaja);
 }
 
-exports.abrirCajon = function(event){
+exports.abrirCajon = function (event) {
     abrirCajon(event);
 }
