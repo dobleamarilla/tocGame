@@ -942,43 +942,62 @@ function addMenus() {
 }
 function sincronizarToc() /* 0 => NO ENVIADO | 1 => ENVIADO */ 
 {
-    if(!modoDesarrollador){
+    if(!modoDesarrollador)
+	{
         let arrayTickets = [];
-        db.tickets.where({ enviado: 0, enTransito: 0 }).modify((value) => {
+        db.tickets.where({ enviado: 0, enTransito: 0 }).modify((value) => 
+		{
             value.enTransito = 1;
             arrayTickets.push(value);
-        }).then(info => {
-            if (info) {
+        }).then(info => 
+		{
+            if (info) 
+			{
                 enviarTickets(arrayTickets);
             }
             let arrayCajas = [];
-            db.cajas.where({ enviado: 0, enTransito: 0 }).modify(value => {
-                if (value.abierta === 0) {
+            db.cajas.where({ enviado: 0, enTransito: 0 }).modify(value => 
+			{
+                if (value.abierta === 0) 
+				{
                     value.enTransito = 1;
                     arrayCajas.push(value);
                 }
-            }).then(info2 => {
-                if (info2) {
+            }).then(async function(info2)
+			{
+                if (info2) 
+				{
+					for(let i = 0; i < arrayCajas.length; i++)
+					{
+						arrayCajas[i].primerTicket = (await db.tickets.where({idCaja: arrayCajas[i].id}).first()).idTicket;
+						arrayCajas[i].ultimoTicket = (await db.tickets.where({idCaja: arrayCajas[i].id}).last()).idTicket;
+					}
                     enviarCajas(arrayCajas);
                 }
-                console.log("Sincronizando");
+
                 let arrayMovimientos = [];
-                db.movimientos.where({ enviado: 0, enTransito: 0 }).modify(value => {
+                db.movimientos.where({ enviado: 0, enTransito: 0 }).modify(value => 
+				{
                     value.enTransito = 1;
                     arrayMovimientos.push(value);
-                }).then(info3 => {
-                    if (info3) {
+                }).then(info3 => 
+				{
+                    if (info3) 
+					{
                         enviarMovimientos(arrayMovimientos);
                     }
-                }).catch(err => {
+                }).catch(err => 
+				{
                     console.log(err);
                     notificacion('Error en Dexie Movimientos', 'error');
                 })
-            }).catch(err => {
+            }).catch(err => 
+			{
                 console.log(err);
                 notificacion('Error en Dexie cajas, sincronizarToc()', 'error');
             });
-        }).catch(err => {
+        }).catch(err => 
+		{
             console.log(err);
             notificacion('Error en sincronizarToc()', 'error');
         });
